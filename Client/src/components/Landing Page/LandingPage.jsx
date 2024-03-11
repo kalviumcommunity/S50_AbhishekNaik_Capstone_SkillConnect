@@ -1,5 +1,5 @@
 import React from "react";
-import Typewriter from "typewriter-effect";
+import TypewriterText from "../TypewriterText";
 
 // Constants for hardcoded strings
 const STRINGS = {
@@ -19,25 +19,7 @@ const LandingPage = () => {
         <div className="w-1/2 bg-white flex flex-col justify-center items-center">
           <div className="text-center">
             <h1 className="text-4xl font-bold">
-              <Typewriter
-                options={{
-                  loop: true,
-                  autoStart: true,
-                  cursor: "",
-                }}
-                onInit={(typewriter) => {
-                  typewriter
-                    .typeString(STRINGS.connect)
-                    .pauseFor(1500)
-                    .deleteAll()
-                    .typeString(STRINGS.learn)
-                    .pauseFor(1500)
-                    .deleteAll()
-                    .typeString(STRINGS.grow)
-                    .pauseFor(1500)
-                    .start();
-                }}
-              />
+              <TypewriterText strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]} />
             </h1>
             <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
           </div>
