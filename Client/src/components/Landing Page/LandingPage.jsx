@@ -1,6 +1,16 @@
 import React from "react";
 import Typewriter from "typewriter-effect";
 
+// Constants for hardcoded strings
+const STRINGS = {
+  connect: "Connect.",
+  learn: "Learn.",
+  grow: "Grow.",
+  tagline: "SkillConnect: Where Knowledge Meets Community.",
+  signUp: "Sign Up",
+  logIn: "Log In",
+};
+
 const LandingPage = () => {
   return (
     <>
@@ -17,28 +27,26 @@ const LandingPage = () => {
                 }}
                 onInit={(typewriter) => {
                   typewriter
-                    .typeString("Connect.")
+                    .typeString(STRINGS.connect)
                     .pauseFor(1500)
                     .deleteAll()
-                    .typeString(" Learn.")
+                    .typeString(STRINGS.learn)
                     .pauseFor(1500)
                     .deleteAll()
-                    .typeString("  Grow.")
+                    .typeString(STRINGS.grow)
                     .pauseFor(1500)
                     .start();
                 }}
               />
             </h1>
-            <p className="text-2xl mt-4 font-poppins">
-              SkillConnect: Where Knowledge Meets Community.
-            </p>
+            <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
           </div>
           <div className="mt-8">
             <button className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mr-4">
-              Sign Up
+              {STRINGS.signUp}
             </button>
             <button className="bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded">
-              Log In
+              {STRINGS.logIn}
             </button>
           </div>
         </div>
