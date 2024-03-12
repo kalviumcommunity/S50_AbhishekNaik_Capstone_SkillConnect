@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const SaltRounds = process.env.BCRYPT_SALT_ROUNDS
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
@@ -8,7 +9,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await User.find();
     res.send(users);
   } catch (error) {
-    res.status(500).send("Server Error");
+    res.status(500).send("500-Server Error");
   }
 };
 
@@ -18,7 +19,7 @@ exports.getUserById = async (req, res) => {
     const user = await User.findById(req.params.id);
     res.send(user);
   } catch (error) {
-    res.status(500).send("Server Error");
+    res.status(500).send("500-Server Error");
   }
 };
 
@@ -31,7 +32,7 @@ exports.createUser = async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, parseInt(SaltRounds));
     const user = new User({
       name: req.body.name,
       email: req.body.email,
@@ -40,6 +41,6 @@ exports.createUser = async (req, res) => {
     const result = await user.save();
     res.send(result);
   } catch (error) {
-    res.status(500).send("Server Error");
+    res.status(500).send("500-Server Error");
   }
 };
