@@ -5,10 +5,12 @@ const app = express();
 const port = process.env.PORT || 3001; 
 const DatabaseConnection = require("./config/DatabaseConnection");
 const pingRoute = require("./routes/ping");
+const userRoute = require("./routes/user");
 
 app.use(express.json()); 
 
-app.use("/ping", pingRoute);
+app.use("/", pingRoute);
+app.use("/user", userRoute);
 
 DatabaseConnection();
 
