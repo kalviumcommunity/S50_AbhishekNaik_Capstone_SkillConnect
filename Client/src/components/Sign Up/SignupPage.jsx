@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-import TypewriterText from "../TypewriterText";
-
-const STRINGS = {
-  connect: "Connect.",
-  learn: "Learn.",
-  grow: "Grow.",
-  tagline: "SkillConnect: Where Knowledge Meets Community.",
-  signUp: "Sign Up",
-  logIn: "Log In",
-};
+import TypewriterText from "../../utils/TypewriterText";
+import { STRINGS } from "../../utils/Strings";
+// import axios from "axios";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -39,7 +32,7 @@ const SignUpPage = () => {
   return (
     <div className="flex h-screen">
       {/* Left side */}
-      <div className="w-1/2 bg-white flex flex-col justify-center items-center">
+      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold">
             <TypewriterText
@@ -105,7 +98,7 @@ const SignUpPage = () => {
       </div>
 
       {/* Right side */}
-      <div className="w-1/2 bg-black"></div>
+      <div className="hidden md:block w-1/2 bg-black"></div>
 
       {/* Logo */}
       <img

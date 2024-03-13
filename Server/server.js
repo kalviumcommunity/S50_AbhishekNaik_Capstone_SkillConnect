@@ -9,7 +9,7 @@ const userRoute = require("./routes/user");
 
 app.use(express.json()); 
 
-app.use("/", pingRoute);
+app.use("/ping", pingRoute);
 app.use("/user", userRoute);
 
 DatabaseConnection();
