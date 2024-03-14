@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use("/ping", pingRoute);
 app.use("/user", userRoute);
-app.use(cors())
+app.use(cors());
 DatabaseConnection();
 
 const server = app.listen(port, () => {
