@@ -6,12 +6,13 @@ const port = process.env.PORT || 3001;
 const DatabaseConnection = require("./config/DatabaseConnection");
 const pingRoute = require("./routes/ping");
 const userRoute = require("./routes/user");
+const cors = require("cors");
 
 app.use(express.json()); 
 
 app.use("/ping", pingRoute);
 app.use("/user", userRoute);
-
+app.use(cors())
 DatabaseConnection();
 
 const server = app.listen(port, () => {

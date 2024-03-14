@@ -2,7 +2,7 @@ import React from "react";
 import TypewriterText from "../../utils/TypewriterText";
 import { Link } from "react-router-dom";
 import { STRINGS } from "../../utils/Strings";
-import 'ldrs/trio'
+import "ldrs/trio";
 
 const LandingPage = () => {
   return (
@@ -23,9 +23,11 @@ const LandingPage = () => {
               {STRINGS.signUp}
             </button>
           </Link>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4">
-            {STRINGS.logIn}
-          </button>
+          <Link to="/login">
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4">
+              {STRINGS.logIn}
+            </button>
+          </Link>
         </div>
       </div>
 

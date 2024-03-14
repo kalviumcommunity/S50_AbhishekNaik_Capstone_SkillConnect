@@ -4,6 +4,7 @@ export const STRINGS = {
   grow: "Grow.",
   tagline: "SkillConnect: Where Knowledge Meets Community.",
   signUp: "Get Started",
+  SignUp: "Sign Up",
   logIn: "Log In",
   aboutUs: "About",
   aboutDescription:
