@@ -9,10 +9,10 @@ const userRoute = require("./routes/user");
 const cors = require("cors");
 
 app.use(express.json()); 
-
+app.use(cors());
 app.use("/ping", pingRoute);
 app.use("/user", userRoute);
-app.use(cors());
+
 DatabaseConnection();
 
 const server = app.listen(port, () => {

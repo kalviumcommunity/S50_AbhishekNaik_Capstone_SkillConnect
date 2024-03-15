@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import TypewriterText from "../../utils/TypewriterText";
 import { STRINGS } from "../../utils/Strings";
-// import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -11,27 +13,70 @@ const SignUpPage = () => {
     repeatPassword: "",
   });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Form validation logic
-    if (formData.password !== formData.repeatPassword) {
-      alert("Passwords do not match");
-      return;
+    const validationErrors = validate(formData);
+    if (Object.keys(validationErrors).length === 0) {
+      if (formData.password !== formData.repeatPassword) {
+        setErrors({ repeatPassword: "Passwords do not match" });
+        return;
+      }
+      try {
+        const response = await axios.post("http://localhost:3000/user", {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
+        if (response.status === 200) {
+          setFormData({
+            username: "",
+            email: "",
+            password: "",
+            repeatPassword: "",
+          });
+          navigate("/login");
+        } else {
+          console.error("Failed to sign up user");
+          setErrors({
+            server: "Failed to sign up user. Please try again later.",
+          });
+        }
+      } catch (error) {
+        console.error("Error occurred while signing up:", error);
+        setErrors({ server: "An error occurred. Please try again later." });
+      }
+    } else {
+      setErrors(validationErrors);
     }
-    // Handle form submission here
+  };
+
+  const validate = (data) => {
+    const errors = {};
+    if (!data.username.trim()) {
+      errors.username = "Username is required";
+    }
+    if (!data.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+      errors.email = "Email address is invalid";
+    }
+    if (!data.password) {
+      errors.password = "Password is required";
+    }
+    if (!data.repeatPassword) {
+      errors.repeatPassword = "Repeat password is required";
+    }
+    return errors;
   };
 
   return (
     <div className="flex h-screen">
-      {/* Left side */}
       <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold">
@@ -52,8 +97,10 @@ const SignUpPage = () => {
                 placeholder="Username"
                 className="bg-gray-200 py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                autoComplete="username"
               />
+              {errors.username && (
+                <p className="text-red-500">{errors.username}</p>
+              )}
             </div>
             <div className="mb-4">
               <input
@@ -64,8 +111,8 @@ const SignUpPage = () => {
                 placeholder="Email"
                 className="bg-gray-200 py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                autoComplete="email"
               />
+              {errors.email && <p className="text-red-500">{errors.email}</p>}
             </div>
             <div className="mb-4">
               <input
@@ -76,8 +123,10 @@ const SignUpPage = () => {
                 placeholder="Password"
                 className="bg-gray-200 py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                autoComplete="current-password"
               />
+              {errors.password && (
+                <p className="text-red-500">{errors.password}</p>
+              )}
             </div>
             <div className="mb-6">
               <input
@@ -88,8 +137,10 @@ const SignUpPage = () => {
                 placeholder="Repeat Password"
                 className="bg-gray-200 py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
-                autoComplete="current-password"
               />
+              {errors.repeatPassword && (
+                <p className="text-red-500">{errors.repeatPassword}</p>
+              )}
             </div>
             <button
               type="submit"
@@ -97,19 +148,12 @@ const SignUpPage = () => {
             >
               {STRINGS.SignUp}
             </button>
+            {errors.server && (
+              <p className="text-red-500 mt-2">{errors.server}</p>
+            )}
           </form>
         </div>
       </div>
-
-      {/* Right side */}
-      <div className="hidden md:block w-1/2 bg-black"></div>
-
-      {/* Logo */}
-      <img
-        src="site-logo.png"
-        alt="Skill Connect"
-        className="absolute top-0 left-0 p-4"
-      />
     </div>
   );
 };

@@ -25,7 +25,8 @@ const LoginPage = () => {
       return;
     }
     // Handle form submission here
-    console.log("Login data:", formData);
+    console.log("WIP,Login data:", formData);
+
   };
 
   return (
