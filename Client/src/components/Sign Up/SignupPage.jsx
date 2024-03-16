@@ -3,11 +3,12 @@ import TypewriterText from "../../utils/TypewriterText";
 import { STRINGS } from "../../utils/Strings";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {FaGoogle} from "react-icons/fa"
 
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     repeatPassword: "",
@@ -29,13 +30,13 @@ const SignUpPage = () => {
       }
       try {
         const response = await axios.post("http://localhost:3000/user", {
-          username: formData.username,
+          name: formData.username,
           email: formData.email,
           password: formData.password,
         });
         if (response.status === 200) {
           setFormData({
-            username: "",
+            name: "",
             email: "",
             password: "",
             repeatPassword: "",
@@ -48,6 +49,7 @@ const SignUpPage = () => {
           });
         }
       } catch (error) {
+        console.log(error)
         console.error("Error occurred while signing up:", error);
         setErrors({ server: "An error occurred. Please try again later." });
       }
@@ -148,6 +150,14 @@ const SignUpPage = () => {
             >
               {STRINGS.SignUp}
             </button>
+            <a href="http://localhost:3000/auth/google">
+              <button
+                type="button"
+                className="flex items-center justify-center mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <FaGoogle className="mr-2" /> Sign in with Google
+              </button>
+            </a>
             {errors.server && (
               <p className="text-red-500 mt-2">{errors.server}</p>
             )}

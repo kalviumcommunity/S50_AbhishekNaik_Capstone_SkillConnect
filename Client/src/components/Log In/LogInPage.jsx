@@ -5,7 +5,7 @@ import { STRINGS } from "../../utils/Strings";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    usernameOrEmail: "",
+    name: "",
     password: "",
   });
 
