@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
+const ES_SECRET = process.env.EXPRESS_SESSION_SECRET;
 const DatabaseConnection = require("./config/DatabaseConnection");
 const pingRoute = require("./routes/ping");
 const userRoute = require("./routes/user");
@@ -16,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 app.use(
   session({
-    secret: "skillconnect",
+    secret: ES_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },

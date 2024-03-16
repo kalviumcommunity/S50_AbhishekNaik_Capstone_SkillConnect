@@ -35,7 +35,7 @@ exports.createUser = async (req, res) => {
       parseInt(SaltRounds)
     );
 
-    console.log(req.body)
+    console.log(req.body);
     const user = new User({
       name: req.body.name,
       email: req.body.email,
@@ -44,10 +44,14 @@ exports.createUser = async (req, res) => {
     const result = await user.save();
     res.send(result);
   } catch (error) {
-    console.log(error)
-    res.status(500).json(error);
+    console.log("Error during user creation:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({ error: "Email or name already exists" });
+    }
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 exports.deleteUserById = async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -94,12 +98,16 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
-    const token = jwt.sign({ username: user.name, email: user.email }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { username: user.name, email: user.email },
+      SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
     res.cookie("name", token, {
       httpOnly: true,
-      secure: true, 
+      secure: true,
       maxAge: 3600000,
     });
     res.json({ message: "Login successful", user, token });
