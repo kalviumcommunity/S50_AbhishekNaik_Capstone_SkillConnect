@@ -20,6 +20,10 @@ const Homepage = () => {
         src="site-logo.png"
         alt="Skill Connect"
         className="absolute top-0 left-0 p-4"
+        style={{
+          filter:
+            "brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(175deg)",
+        }}
       />
     </div>
   );
