@@ -15,7 +15,7 @@ passport.use(
       passReqToCallback: true,
     },
     async function (request, accessToken, refreshToken, profile, done) {
-      console.log(profile);
+      // console.log(profile);
       try {
         const existingProfile = await Profile.findOne({ id: profile.id });
         if (!existingProfile) {
