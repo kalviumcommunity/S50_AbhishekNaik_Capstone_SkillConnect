@@ -15,15 +15,15 @@ passport.use(
       passReqToCallback: true,
     },
     async function (request, accessToken, refreshToken, profile, done) {
-      // console.log(profile);
+      console.log(profile);
       try {
         const existingProfile = await Profile.findOne({ id: profile.id });
         if (!existingProfile) {
           const newProfile = new Profile({
-            id: profile._json.id,
-            name: profile._json.name,
-            picture: profile._json.picture,
-            email: profile._json.email,
+            id: profile.id,
+            name: profile.displayName,
+            picture: profile.picture,
+            email: profile.email,
           });
           await newProfile.save();
           return done(null, newProfile);
