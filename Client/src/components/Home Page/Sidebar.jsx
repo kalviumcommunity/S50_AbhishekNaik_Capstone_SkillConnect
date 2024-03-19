@@ -3,6 +3,7 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ onLogout }) => {
   const [expanded, setExpanded] = useState(false);
@@ -38,6 +39,12 @@ const Sidebar = ({ onLogout }) => {
     );
   };
 
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate("/profile");
+  };
+
   return (
     <div
       className={`bg-gray-900 text-white h-screen p-4 transition-all duration-300 ${
@@ -49,26 +56,19 @@ const Sidebar = ({ onLogout }) => {
       <div className="mb-8">
         {/* Profile Button */}
         {expanded
-          ? renderButton(
-              () => console.log("Profile button clicked"),
-              "Profile",
-              "blue"
-            )
-          : renderIcon(
-              () => console.log("Profile button clicked"),
-              AiOutlineUser
-            )}
+          ? renderButton(handleRedirect, "Profile", "blue")
+          : renderIcon(handleRedirect, AiOutlineUser)}
 
         {/* Messages Button */}
         {expanded
           ? renderButton(
               () => console.log("Messages button clicked"),
               "Messages",
-              "blue"
+              "blue",
             )
           : renderIcon(
               () => console.log("Messages button clicked"),
-              FaEnvelope
+              FaEnvelope,
             )}
 
         {/* Logout Button */}
