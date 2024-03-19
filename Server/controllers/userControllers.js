@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(
       req.body.password,
-      parseInt(SaltRounds),
+      parseInt(SaltRounds)
     );
 
     console.log(req.body);
@@ -99,8 +99,13 @@ exports.loginUser = async (req, res) => {
     }
     let profile = await Profile.findOne({ name: user.name });
     if (!profile) {
-      profile = new Profile({ name: user.name });
-      await profile.save();
+      try {
+        profile = new Profile({ name: user.name });
+        await profile.save();
+      } catch (profileErr) {
+        console.error("Error creating profile:", profileErr);
+        return res.status(500).json({ error: "Profile creation failed" });
+      }
     }
     user.profile = profile._id;
     await user.save();
@@ -109,7 +114,7 @@ exports.loginUser = async (req, res) => {
       SECRET_KEY,
       {
         expiresIn: "1h",
-      },
+      }
     );
     res.cookie("name", token, {
       httpOnly: true,

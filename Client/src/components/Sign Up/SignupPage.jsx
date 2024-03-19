@@ -33,6 +33,8 @@ const SignUpPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setErrors({});
+
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length === 0) {
       if (formData.password !== formData.repeatPassword) {
@@ -47,6 +49,7 @@ const SignUpPage = () => {
             email: formData.email,
             password: formData.password,
           });
+
           if (response.status === 200) {
             setFormData({
               username: "",
@@ -64,9 +67,16 @@ const SignUpPage = () => {
             });
           }
         } catch (error) {
-          console.log(error);
           console.error("Error occurred while signing up:", error);
-          setErrors({ server: "An error occurred. Please try again later." });
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            setErrors({ server: error.response.data.message });
+          } else {
+            setErrors({ server: "An error occurred. Please try again later." });
+          }
         }
       }
     } else {
