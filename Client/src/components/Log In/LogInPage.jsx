@@ -6,9 +6,13 @@ import Autoplay from "embla-carousel-autoplay";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { slides } from "../../utils/Slides";
-// import axios from "axios";
+import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     password: "",
@@ -22,14 +26,26 @@ const LoginPage = () => {
     }));
   };
 
+  const handleSignUpClick = () => {
+    navigate("/signup");
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!formData.usernameOrEmail || !formData.password) {
-      alert("Please fill in all fields");
+    if (!formData.name || !formData.password) {
+      toast({
+        variant: "destructive",
+        title: "Please fill in all the fields",
+      });
       return;
     }
     // Handle form submission here
     console.log("WIP,Login data:", formData);
+    axios
+      .post("http://localhost:3000/user/login", formData)
+      .then((response) => {
+        console.log(response);
+      });
   };
 
   return (
@@ -55,8 +71,8 @@ const LoginPage = () => {
               <div className="mb-4">
                 <input
                   type="text"
-                  name="usernameOrEmail"
-                  value={formData.usernameOrEmail}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   placeholder="Username"
                   className="bg-gray-200 py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -83,6 +99,16 @@ const LoginPage = () => {
                 {STRINGS.logIn}
               </Button>
             </form>
+            <p className="mt-4 text-center">
+              Don't have an account?{" "}
+              <Button
+                className="underline"
+                variant="link"
+                onClick={handleSignUpClick}
+              >
+                Sign Up
+              </Button>
+            </p>
           </CardContent>
         </Card>
       </div>

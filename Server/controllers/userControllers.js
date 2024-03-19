@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const User = require("../models/User");
+const Profile = require("../models/ProfileDetails");
 const bcrypt = require("bcrypt");
 const SaltRounds = process.env.BCRYPT_SALT_ROUNDS;
 const jwt = require("jsonwebtoken");
@@ -89,15 +90,25 @@ exports.loginUser = async (req, res) => {
   try {
     const { name, password } = req.body;
     const user = await User.findOne({ name });
-
     if (!user) {
       return res.status(401).json({ error: "Invalid username" });
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
+    let profile = await Profile.findOne({ name: user.name });
+    if (!profile) {
+      try {
+        profile = new Profile({ name: user.name });
+        await profile.save();
+      } catch (profileErr) {
+        console.error("Error creating profile:", profileErr);
+        return res.status(500).json({ error: "Profile creation failed" });
+      }
+    }
+    user.profile = profile._id;
+    await user.save();
     const token = jwt.sign(
       { username: user.name, email: user.email },
       SECRET_KEY,
@@ -111,6 +122,7 @@ exports.loginUser = async (req, res) => {
       maxAge: 3600000,
     });
     res.json({ message: "Login successful", user, token });
+    console.log("Login successful", user, token);
   } catch (err) {
     console.error("Error during login:", err);
     res.status(500).json({ error: "Internal Server Error" });

@@ -9,9 +9,11 @@ import Autoplay from "embla-carousel-autoplay";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { slides } from "../../utils/Slides";
+import { useToast } from "@/components/ui/use-toast";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,38 +27,57 @@ const SignUpPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setErrors({});
+
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length === 0) {
       if (formData.password !== formData.repeatPassword) {
-        setErrors({ repeatPassword: "Passwords do not match" });
-        return;
-      }
-      try {
-        const response = await axios.post("http://localhost:3000/user", {
-          name: formData.username,
-          email: formData.email,
-          password: formData.password,
+        toast({
+          variant: "destructive",
+          title: "Passwords do not match",
         });
-        if (response.status === 200) {
-          setFormData({
-            name: "",
-            email: "",
-            password: "",
-            repeatPassword: "",
+      } else {
+        try {
+          const response = await axios.post("http://localhost:3000/user", {
+            name: formData.username,
+            email: formData.email,
+            password: formData.password,
           });
-          navigate("/login");
-        } else {
-          console.error("Failed to sign up user");
-          setErrors({
-            server: "Failed to sign up user. Please try again later.",
-          });
+
+          if (response.status === 200) {
+            setFormData({
+              username: "",
+              email: "",
+              password: "",
+              repeatPassword: "",
+            });
+            if (Object.keys(errors).length === 0) {
+              navigate("/login");
+            }
+          } else {
+            console.error("Failed to sign up user");
+            setErrors({
+              server: "Failed to sign up user. Please try again later.",
+            });
+          }
+        } catch (error) {
+          console.error("Error occurred while signing up:", error);
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            setErrors({ server: error.response.data.message });
+          } else {
+            setErrors({ server: "An error occurred. Please try again later." });
+          }
         }
-      } catch (error) {
-        console.log(error);
-        console.error("Error occurred while signing up:", error);
-        setErrors({ server: "An error occurred. Please try again later." });
       }
     } else {
       setErrors(validationErrors);
@@ -176,6 +197,16 @@ const SignUpPage = () => {
                 <p className="text-red-500 mt-2">{errors.server}</p>
               )}
             </form>
+            <p className="mt-4 text-center">
+              Have a Account?{" "}
+              <Button
+                className="underline"
+                variant="link"
+                onClick={handleLoginClick}
+              >
+                Log In
+              </Button>
+            </p>
           </CardContent>
         </Card>
       </div>
