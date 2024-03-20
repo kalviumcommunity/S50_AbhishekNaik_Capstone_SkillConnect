@@ -1,4 +1,4 @@
-const { validationResult } = require("express-validator");
+const { validationResult, header } = require("express-validator");
 const User = require("../models/User");
 const Profile = require("../models/ProfileDetails");
 const bcrypt = require("bcrypt");
@@ -16,7 +16,7 @@ exports.getAllUsers = async (req, res) => {
 };
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params._id);
     res.send(user);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(
       req.body.password,
-      parseInt(SaltRounds)
+      parseInt(SaltRounds),
     );
 
     console.log(req.body);
@@ -89,7 +89,7 @@ exports.loginUser = async (req, res) => {
   }
   try {
     const { name, password } = req.body;
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ name }).populate("profile").exec();
     if (!user) {
       return res.status(401).json({ error: "Invalid username" });
     }
@@ -97,10 +97,14 @@ exports.loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
-    let profile = await Profile.findOne({ name: user.name });
+    let profile = await Profile.findOne({ name: user.name })
+      .populate("posts")
+      .exec();
+
     if (!profile) {
       try {
         profile = new Profile({ name: user.name });
+        profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
         await profile.save();
       } catch (profileErr) {
         console.error("Error creating profile:", profileErr);
@@ -114,15 +118,14 @@ exports.loginUser = async (req, res) => {
       SECRET_KEY,
       {
         expiresIn: "1h",
-      }
+      },
     );
     res.cookie("name", token, {
       httpOnly: true,
-      secure: true,
+      // secure: true,
       maxAge: 3600000,
     });
     res.json({ message: "Login successful", user, token });
-    console.log("Login successful", user, token);
   } catch (err) {
     console.error("Error during login:", err);
     res.status(500).json({ error: "Internal Server Error" });

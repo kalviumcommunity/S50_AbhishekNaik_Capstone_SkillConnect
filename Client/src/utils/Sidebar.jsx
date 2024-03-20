@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
-import { Button } from "../ui/button";
+import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ onLogout }) => {

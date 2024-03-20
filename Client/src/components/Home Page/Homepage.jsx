@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import Navbar from "../Home Page/Navbar";
-import Sidebar from "../Home Page/Sidebar";
+import Navbar from "../../utils/Navbar";
+import Sidebar from "../../utils/Sidebar";
 
 const Homepage = () => {
   const navigate = useNavigate();

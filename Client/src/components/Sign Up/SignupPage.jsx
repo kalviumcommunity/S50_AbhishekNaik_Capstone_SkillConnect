@@ -177,6 +177,7 @@ const SignUpPage = () => {
                 )}
               </div>
               <Button
+                variant="ghost"
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -187,6 +188,7 @@ const SignUpPage = () => {
               </p>
               <a href="http://localhost:3000/auth/google">
                 <Button
+                  variant="ghost"
                   type="button"
                   className="flex items-center justify-center mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-red-500"
                 >

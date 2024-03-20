@@ -42,9 +42,13 @@ const LoginPage = () => {
     // Handle form submission here
     console.log("WIP,Login data:", formData);
     axios
-      .post("http://localhost:3000/user/login", formData)
+      .post("http://localhost:3000/user/login", formData, {
+        withCredentials: true,
+      })
       .then((response) => {
         console.log(response);
+        // set the cookie
+        // document.cookie = `token=${response.data.token}`;
       });
   };
 
