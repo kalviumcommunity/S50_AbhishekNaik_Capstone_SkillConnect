@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import TypewriterText from "../../utils/TypewriterText";
 import { STRINGS } from "../../utils/Strings";
 import { Button } from "../ui/button";
@@ -46,7 +47,7 @@ const LoginPage = () => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data.user);
         // set the cookie
         // document.cookie = `token=${response.data.token}`;
       });
@@ -55,15 +56,25 @@ const LoginPage = () => {
   return (
     <div className="flex h-screen">
       {/* Left side */}
-      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center">
-        <div className="text-center">
+      <motion.div
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+        className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center"
+      >
+        <motion.div
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="text-center"
+        >
           <h1 className="text-4xl font-bold">
             <TypewriterText
               strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]}
             />
           </h1>
           <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
-        </div>
+        </motion.div>
         <Card className="mt-8 w-[300px]">
           <CardHeader>
             <CardTitle className="flex justify-center items-center underline">
@@ -72,7 +83,12 @@ const LoginPage = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="max-w-md w-full">
-              <div className="mb-4">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1, duration: 1 }}
+                className="mb-4"
+              >
                 <input
                   type="text"
                   name="name"
@@ -83,8 +99,13 @@ const LoginPage = () => {
                   required
                   autoComplete="username"
                 />
-              </div>
-              <div className="mb-6">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 1 }}
+                className="mb-6"
+              >
                 <input
                   type="password"
                   name="password"
@@ -95,7 +116,7 @@ const LoginPage = () => {
                   required
                   autoComplete="current-password"
                 />
-              </div>
+              </motion.div>
               <Button
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -103,7 +124,12 @@ const LoginPage = () => {
                 {STRINGS.logIn}
               </Button>
             </form>
-            <p className="mt-4 text-center">
+            <motion.p
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 1 }}
+              className="mt-4 text-center"
+            >
               Don't have an account?{" "}
               <Button
                 className="underline"
@@ -112,10 +138,10 @@ const LoginPage = () => {
               >
                 Sign Up
               </Button>
-            </p>
+            </motion.p>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Right side */}
       <div className="hidden md:block w-1/2 overflow-hidden">
@@ -123,6 +149,7 @@ const LoginPage = () => {
           opts={{
             align: "start",
             loop: true,
+            watchDrag: false,
           }}
           plugins={[
             Autoplay({
@@ -147,10 +174,13 @@ const LoginPage = () => {
       </div>
 
       {/* Logo */}
-      <img
+      <motion.img
         src="site-logo.png"
         alt="Skill Connect"
         className="absolute top-0 left-0 p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
       />
     </div>
   );

@@ -21,7 +21,7 @@ const PostModal = ({ onClose }) => {
         },
         {
           withCredentials: true,
-        }
+        },
       )
       .then((response) => {
         console.log(response);

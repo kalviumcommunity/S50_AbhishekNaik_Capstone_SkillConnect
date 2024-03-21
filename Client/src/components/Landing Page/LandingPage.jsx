@@ -8,20 +8,35 @@ import Autoplay from "embla-carousel-autoplay";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
 import { slides } from "../../utils/Slides";
+import { motion } from "framer-motion";
 
 const LandingPage = () => {
   return (
-    <div className="relative flex h-screen">
+    <motion.div
+      className="relative flex h-screen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Left side */}
-      <div className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold">
-            <TypewriterText
-              strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]}
-            />
-          </h1>
-          <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
-        </div>
+      <motion.div
+        className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        <motion.h1
+          className="text-4xl font-bold"
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1, duration: 0.5 }}
+        >
+          <TypewriterText
+            strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]}
+          />
+        </motion.h1>
+        <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
         <div className="mt-8">
           <Link to="/signup">
             <Button className="bg-blue-500 mr-6 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -40,7 +55,7 @@ const LandingPage = () => {
             About
           </Button>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Right side */}
       <div className="hidden md:block w-1/2 overflow-hidden">
@@ -48,6 +63,7 @@ const LandingPage = () => {
           opts={{
             align: "start",
             loop: true,
+            watchDrag: false,
           }}
           plugins={[
             Autoplay({
@@ -55,7 +71,7 @@ const LandingPage = () => {
             }),
           ]}
         >
-          <CarouselContent className="w-full">
+          <CarouselContent>
             {slides.map((slide, index) => (
               <CarouselItem key={index}>
                 <div>
@@ -72,12 +88,15 @@ const LandingPage = () => {
       </div>
 
       {/* Logo */}
-      <img
+      <motion.img
         src="site-logo.png"
         alt="Skill Connect"
         className="absolute top-0 left-0 p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
       />
-    </div>
+    </motion.div>
   );
 };
 

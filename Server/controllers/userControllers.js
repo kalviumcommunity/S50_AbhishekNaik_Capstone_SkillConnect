@@ -8,7 +8,7 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().populate("profile").exec();
     res.send(users);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -16,7 +16,7 @@ exports.getAllUsers = async (req, res) => {
 };
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params._id);
+    const user = await User.findById(req.params._id).populate("profile").exec();
     res.send(user);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -90,6 +90,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { name, password } = req.body;
     const user = await User.findOne({ name }).populate("profile").exec();
+    console.log("user", user);
     if (!user) {
       return res.status(401).json({ error: "Invalid username" });
     }
@@ -100,19 +101,21 @@ exports.loginUser = async (req, res) => {
     let profile = await Profile.findOne({ name: user.name })
       .populate("posts")
       .exec();
+    console.log("profile", profile);
 
     if (!profile) {
       try {
         profile = new Profile({ name: user.name });
         profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
         await profile.save();
+        user.profile = profile._id;
+        await user.save();
       } catch (profileErr) {
         console.error("Error creating profile:", profileErr);
         return res.status(500).json({ error: "Profile creation failed" });
       }
     }
-    user.profile = profile._id;
-    await user.save();
+
     const token = jwt.sign(
       { username: user.name, email: user.email },
       SECRET_KEY,
@@ -125,6 +128,7 @@ exports.loginUser = async (req, res) => {
       // secure: true,
       maxAge: 3600000,
     });
+    console.log("use", user);
     res.json({ message: "Login successful", user, token });
   } catch (err) {
     console.error("Error during login:", err);
