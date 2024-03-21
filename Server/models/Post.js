@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema({
-  name: String,
-  caption: String,
+  title: String,
+  description: String,
   image: String,
   video: String,
   comments: {
@@ -17,7 +17,11 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  created_at: Date.now(),
+  createdAt: Date,
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Profile",
+  },
 });
 
 module.exports = mongoose.model("Post", postSchema);

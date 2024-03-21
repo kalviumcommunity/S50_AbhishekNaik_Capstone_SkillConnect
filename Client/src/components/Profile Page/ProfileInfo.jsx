@@ -5,16 +5,13 @@ const ProfileInfo = ({ user }) => {
     return null;
   }
 
-  // Dummy profile image URL
-  const dummyProfileImage = "https://via.placeholder.com/150";
-
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="px-4 py-6 sm:p-6">
         <div className="flex items-center justify-center">
           <img
-            src={user.avatar || dummyProfileImage}
-            alt="User Avatar"
+            src={user.avatar}
+            alt="User"
             className="w-32 h-32 rounded-full"
           />
         </div>

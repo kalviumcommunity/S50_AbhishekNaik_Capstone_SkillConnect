@@ -7,6 +7,12 @@ const profileSchema = new mongoose.Schema({
   email: String,
   bio: String,
   skills: [String],
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Profile", profileSchema);

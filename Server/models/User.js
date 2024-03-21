@@ -17,10 +17,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Profile",
   },
-  posts: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Post",
-  }
 });
 
 module.exports = mongoose.model("User", userSchema);
