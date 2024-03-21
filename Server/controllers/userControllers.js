@@ -36,7 +36,7 @@ exports.createUser = async (req, res) => {
       parseInt(SaltRounds),
     );
 
-    console.log(req.body);
+    // console.log(req.body);
     const user = new User({
       name: req.body.name,
       email: req.body.email,
@@ -90,7 +90,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { name, password } = req.body;
     const user = await User.findOne({ name }).populate("profile").exec();
-    console.log("user", user);
+    // console.log("user", user);
     if (!user) {
       return res.status(401).json({ error: "Invalid username" });
     }
@@ -101,7 +101,7 @@ exports.loginUser = async (req, res) => {
     let profile = await Profile.findOne({ name: user.name })
       .populate("posts")
       .exec();
-    console.log("profile", profile);
+    // console.log("profile", profile);
 
     if (!profile) {
       try {

@@ -68,10 +68,14 @@ const AboutPage = () => {
                 href="https://github.com/abhisheknaik1112"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub Profile"
               >
                 <AiFillGithub className="h-8 w-8 text-gray-600 hover:text-black" />
               </a>
-              <a href="mailto:abhisheknaik11122gmail.com">
+              <a
+                href="mailto:abhisheknaik11122@gmail.com"
+                aria-label="Send Email"
+              >
                 <AiOutlineMail className="h-8 w-8 text-gray-600 hover:text-red-500" />
               </a>
             </motion.div>

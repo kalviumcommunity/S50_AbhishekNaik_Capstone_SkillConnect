@@ -41,13 +41,14 @@ const LoginPage = () => {
       return;
     }
     // Handle form submission here
-    console.log("WIP,Login data:", formData);
+    // console.log("WIP,Login data:", formData);
     axios
       .post("http://localhost:3000/user/login", formData, {
         withCredentials: true,
       })
-      .then((response) => {
-        console.log(response.data.user);
+      .then(() => {
+        // console.log(response.data.user);
+        navigate("/homepage");
         // set the cookie
         // document.cookie = `token=${response.data.token}`;
       });

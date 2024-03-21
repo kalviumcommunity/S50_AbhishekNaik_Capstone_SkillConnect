@@ -35,9 +35,9 @@ const ProfilePage = () => {
           return response.json();
         })
         .then((data) => {
-          const user1 = data[0].profile;
+          const userDetails = data[0].profile;
           // console.log(data[0].profile);
-          setUser(user1);
+          setUser(userDetails);
           // localStorage.setItem('token', token);
         })
         // .then(()=>{
@@ -49,9 +49,9 @@ const ProfilePage = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log("gdgd", user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("gdgd", user);
+  // }, [user]);
 
   return (
     <motion.div

@@ -41,7 +41,7 @@ app.use("/post", auth, postRoute);
 app.use("/auth", authRoute);
 app.use("/homepage", (req, res) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
+    // console.log(req.user);
     res.redirect("http://localhost:5173/homepage");
   }
 });
