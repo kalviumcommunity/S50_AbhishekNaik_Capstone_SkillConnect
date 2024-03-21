@@ -1,22 +1,26 @@
 const Post = require("../models/Post");
 const { validationResult } = require("express-validator");
 const Profile = require("../models/ProfileDetails");
+const handleError = require("../utils/handleError ");
 
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find();
     res.send(posts);
   } catch (error) {
-    res.status(500).send("500-Server Error");
+    handleError(res, 500, "Server Error");
   }
 };
 
 exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+    if (!post) {
+      return handleError(res, 404, "Post not found");
+    }
     res.send(post);
   } catch (error) {
-    res.status(500).send("500-Server Error");
+    handleError(res, 500, "Server Error");
   }
 };
 
@@ -42,7 +46,7 @@ exports.createPost = async (req, res) => {
 
     res.send(result);
   } catch (error) {
-    res.status(500).send("500-Server Error");
+    handleError(res, 500, "Server Error");
   }
 };
 
@@ -50,11 +54,11 @@ exports.deletePostById = async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
     if (!deletedPost) {
-      return res.status(404).send("404-Post not found");
+      return handleError(res, 404, "Post not found");
     }
     res.send(deletedPost);
   } catch (error) {
-    res.status(500).send("500-Server Error");
+    handleError(res, 500, "Server Error");
   }
 };
 
@@ -68,10 +72,10 @@ exports.updatePostById = async (req, res) => {
       new: true,
     });
     if (!updatedPost) {
-      return res.status(404).send("404-Post not found");
+      return handleError(res, 404, "Post not found");
     }
     res.send(updatedPost);
   } catch (error) {
-    res.status(500).send("500-Server Error");
+    handleError(res, 500, "Server Error");
   }
 };
