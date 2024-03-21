@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../../utils/Navbar";
@@ -16,33 +17,61 @@ const ProfilePage = () => {
     navigate("/homepage");
   };
 
-  // Dummy user data for demonstration
   const [user, setUser] = useState({
-    name: "John",
+    name: "",
     email: "",
-    bio: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Porro necessitatibus nisi atque enim, quas sequi, amet saepe illum magni modi ratione aut, rem placeat odit itaque quis reiciendis cum ullam?",
-    avatar: "",
-    skills: [
-      "React JS",
-      "Node JS",
-      "MongoDB",
-      "Express JS",
-      "HTML",
-      "CSS",
-      "JavaScript",
-    ],
+    bio: "",
+    picture: "",
+    skills: [],
   });
-  return (
-    <div>
-      <Navbar />
 
+  useEffect(() => {
+    const fetchData = async () => {
+      fetch("http://localhost:3000/user")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const userDetails = data[0].profile;
+          // console.log(data[0].profile);
+          setUser(userDetails);
+          // localStorage.setItem('token', token);
+        })
+        // .then(()=>{
+        // })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    };
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   console.log("gdgd", user);
+  // }, [user]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Navbar />
       <div className="flex">
         <Sidebar onLogout={handleLogout} />
-        <div className="w-full px-8 py-6">
+        <motion.div
+          initial={{ x: "-100vw" }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 120 }}
+          className="w-full px-8 py-6"
+        >
           <ProfileInfo user={user} />
-        </div>
+        </motion.div>
       </div>
-      <img
+      <motion.img
         onClick={handleRedirect}
         src="site-logo.png"
         alt="Skill Connect"
@@ -51,8 +80,11 @@ const ProfilePage = () => {
           filter:
             "brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(175deg)",
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
       />
-    </div>
+    </motion.div>
   );
 };
 

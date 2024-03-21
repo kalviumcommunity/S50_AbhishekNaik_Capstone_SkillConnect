@@ -18,12 +18,12 @@ require("./config/PassportAuth");
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors(
-  {
+app.use(
+  cors({
     origin: "http://localhost:5173",
     credentials: true,
-  }
-));
+  }),
+);
 app.use(
   session({
     secret: ES_SECRET,
@@ -41,7 +41,7 @@ app.use("/post", auth, postRoute);
 app.use("/auth", authRoute);
 app.use("/homepage", (req, res) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
+    // console.log(req.user);
     res.redirect("http://localhost:5173/homepage");
   }
 });

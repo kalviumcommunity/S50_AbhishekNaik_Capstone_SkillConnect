@@ -4,4 +4,5 @@ export const slides = [
   "/Slide3.jpg",
   "/Slide4.jpg",
   "/Slide5.jpg",
+  "/Slide6.jpg",
 ];
