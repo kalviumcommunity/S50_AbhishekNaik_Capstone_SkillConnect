@@ -3,7 +3,7 @@ import PostButton from "./PostButton";
 
 const Navbar = () => {
   const handlePost = () => {
-    console.log("Post button clicked!");
+    // console.log("Post button clicked!");
   };
 
   return (

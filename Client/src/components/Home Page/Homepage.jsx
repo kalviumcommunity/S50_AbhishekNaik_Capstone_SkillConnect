@@ -4,13 +4,28 @@ import { useNavigate } from "react-router-dom";
 
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
+import axios from "axios";
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
-    navigate("/login");
+    // console.log("Logout clicked");
+    axios
+      .post(
+        "http://localhost:3000/user/logout",
+        { h: "h" },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+      });
   };
 
   const toggleSidebar = () => {

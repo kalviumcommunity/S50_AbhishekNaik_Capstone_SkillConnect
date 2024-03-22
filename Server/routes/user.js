@@ -7,16 +7,23 @@ const {
   deleteUserById,
   updateUserById,
   loginUser,
+  logoutUser,
+  getSingleUser
 } = require("../controllers/userControllers");
 const validateSignupUserData = require("../middleware/validateSignupUserData");
 const validateEditUserData = require("../middleware/validateEditUserData");
 const validateLoginUserData = require("../middleware/validateLoginUserData");
 
 router.get("/", getAllUsers);
-router.get("/:id", getUserById);
+
+
+router.post("/getsingle", getSingleUser);
+
+
 
 router.post("/", validateSignupUserData, createUser);
 router.post("/login", validateLoginUserData, loginUser);
+router.post("/logout", logoutUser);
 
 router.put("/:id", validateEditUserData, updateUserById);
 
