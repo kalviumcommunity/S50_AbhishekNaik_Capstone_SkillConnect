@@ -138,13 +138,10 @@ exports.loginUser = async (req, res) => {
 
 exports.logoutUser = async (req, res) => {
   console.log("coming");
-  res.cookie("name", "", {
-    httpOnly: true,
-    // secure: true,
-    maxAge: 3600000,
-  });
+  res.clearCookie("name", { httpOnly: true });
   res.json({ message: "Logout successful" });
 };
+
 
 exports.getSingleUser = async (req, res) => {
   // console.log("kk", req.cookies);
