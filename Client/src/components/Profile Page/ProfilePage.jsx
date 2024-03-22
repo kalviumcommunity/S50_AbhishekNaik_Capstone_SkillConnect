@@ -5,12 +5,27 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import ProfileInfo from "./ProfileInfo";
+import axios from "axios";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/login");
+    // console.log("Logout clicked");
+    axios
+      .post(
+        "http://localhost:3000/user/logout",
+        { h: "h" },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+      });
   };
 
   const handleRedirect = () => {
@@ -27,25 +42,30 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      fetch("http://localhost:3000/user")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
+      try {
+        const token = document.cookie;
+        // console.log("token", token);
+
+        const response = await axios.post(
+          "http://localhost:3000/user/getsingle",
+          {},
+          {
+            withCredentials: true,
           }
-          return response.json();
-        })
-        .then((data) => {
-          const userDetails = data[0].profile;
-          // console.log(data[0].profile);
-          setUser(userDetails);
-          // localStorage.setItem('token', token);
-        })
-        // .then(()=>{
-        // })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        });
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = response.data.user.profile;
+        // console.log("data", data);
+        setUser(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
+
     fetchData();
   }, []);
 

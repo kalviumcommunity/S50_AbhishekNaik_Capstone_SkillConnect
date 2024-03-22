@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(
       req.body.password,
-      parseInt(SaltRounds),
+      parseInt(SaltRounds)
     );
 
     // console.log(req.body);
@@ -105,7 +105,7 @@ exports.loginUser = async (req, res) => {
 
     if (!profile) {
       try {
-        profile = new Profile({ name: user.name });
+        profile = new Profile({ name: user.name, email: user.email });
         profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
         await profile.save();
         user.profile = profile._id;
@@ -121,17 +121,52 @@ exports.loginUser = async (req, res) => {
       SECRET_KEY,
       {
         expiresIn: "1h",
-      },
+      }
     );
     res.cookie("name", token, {
       httpOnly: true,
       // secure: true,
       maxAge: 3600000,
     });
-    console.log("use", user);
+    // console.log("use", token);
     res.json({ message: "Login successful", user, token });
   } catch (err) {
     console.error("Error during login:", err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.logoutUser = async (req, res) => {
+  console.log("coming");
+  res.cookie("name", "", {
+    httpOnly: true,
+    // secure: true,
+    maxAge: 3600000,
+  });
+  res.json({ message: "Logout successful" });
+};
+
+exports.getSingleUser = async (req, res) => {
+  // console.log("kk", req.cookies);
+  const { name } = req.cookies;
+  // console.log("name", name);
+
+  try {
+    const payload = jwt.verify(name, SECRET_KEY);
+    // console.log("payload", payload);
+
+    const loginUser = await User.findOne({ name: payload.username }).populate(
+      "profile"
+    ).exec();
+    console.log("loginUser", loginUser.profile);
+
+    if (!loginUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ user: loginUser });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
