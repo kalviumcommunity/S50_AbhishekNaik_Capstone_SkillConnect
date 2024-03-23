@@ -155,8 +155,6 @@ exports.getSingleUser = async (req, res) => {
       .populate({path: "profile",
       populate: {path: "posts"}}) 
       .exec();
-    
-    // console.log("loginUser", loginUser.profile);
 
     if (!loginUser) {
       return res.status(404).json({ message: "User not found" });

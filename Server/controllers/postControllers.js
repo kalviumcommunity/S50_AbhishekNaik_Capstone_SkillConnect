@@ -6,7 +6,7 @@ const handleError = require("../utils/handleError ");
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find();
-    console.log(posts);
+    // console.log(posts);
     res.send(posts);
   } catch (error) {
     handleError(res, 500, "Server Error");
