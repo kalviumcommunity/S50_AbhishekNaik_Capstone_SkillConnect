@@ -7,7 +7,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 p-6">
+    <nav className="bg-gray-900 p-6 sticky">
       <div className="flex justify-between items-center">
         <div></div>
         <PostButton onClick={handlePost} />
@@ -15,5 +15,4 @@ const Navbar = () => {
     </nav>
   );
 };
-
 export default Navbar;

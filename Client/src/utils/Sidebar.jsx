@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
+import { MdLibraryAdd } from "react-icons/md";
 import { Button } from "../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -45,11 +46,16 @@ const Sidebar = ({ onLogout }) => {
     navigate("/profile");
   };
 
+  const handlePost = () => {
+    // Handle post button click
+    console.log("Post button clicked");
+  };
+
   return (
     <div
-      className={`bg-gray-900 text-white h-screen p-4 transition-all duration-300 ${
+      className={`bg-gray-900 sticky text-white h-screen p-4 transition-all duration-300 ${
         expanded ? "w-64" : "w-16"
-      }`}
+      } fixed left-0 top-0 bottom-0 z-10`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -70,6 +76,11 @@ const Sidebar = ({ onLogout }) => {
               () => console.log("Messages button clicked"),
               FaEnvelope,
             )}
+
+        {/* Post Button */}
+        {expanded
+          ? renderButton(handlePost, "Add Post", "blue")
+          : renderIcon(handlePost, MdLibraryAdd)}
 
         {/* Logout Button */}
         <div style={{ position: "absolute", bottom: 0 }}>

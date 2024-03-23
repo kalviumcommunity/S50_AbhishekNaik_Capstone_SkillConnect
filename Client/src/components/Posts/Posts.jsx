@@ -6,7 +6,7 @@ const Post = ({ title, description, mediaUrl }) => {
       <div className="px-6 py-4">
         <h2 className="text-xl font-semibold mb-2">{title}</h2>
         <p className="text-gray-700 mb-4">{description}</p>
-        {imageUrl && (
+        {/* {imageUrl && (
           <img src={imageUrl} alt="Post Image" className="w-full mb-4" />
         )}
         {videoUrl && (
@@ -19,7 +19,7 @@ const Post = ({ title, description, mediaUrl }) => {
               className="w-full"
             ></iframe>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
+import Post from "../Posts/Posts";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import ProfileInfo from "./ProfileInfo";
@@ -40,6 +40,8 @@ const ProfilePage = () => {
     skills: [],
   });
 
+  const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,8 +61,10 @@ const ProfilePage = () => {
         }
 
         const data = response.data.user.profile;
+        const userposts = response.data.user.profile.posts;
         // console.log("data", data);
         setUser(data);
+        setPosts(userposts);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -79,7 +83,7 @@ const ProfilePage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <Navbar />
+      <Navbar/>
       <div className="flex">
         <Sidebar onLogout={handleLogout} />
         <motion.div
@@ -89,6 +93,13 @@ const ProfilePage = () => {
           className="w-full px-8 py-6"
         >
           <ProfileInfo user={user} />
+          {posts.map((post, index) => (
+            <Post
+              key={index}
+              title={post.title}
+              description={post.description}
+            />
+          ))}
         </motion.div>
       </div>
       <motion.img
