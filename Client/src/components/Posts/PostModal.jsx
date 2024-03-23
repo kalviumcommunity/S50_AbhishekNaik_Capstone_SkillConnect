@@ -10,6 +10,7 @@ const PostModal = ({ onClose }) => {
   const [description, setDescription] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
 
+
   const handlePost = () => {
     axios
       .post(
@@ -30,6 +31,7 @@ const PostModal = ({ onClose }) => {
         console.error(error);
       });
     onClose();
+    window.location.reload();
   };
 
   return (

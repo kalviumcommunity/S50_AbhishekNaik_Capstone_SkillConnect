@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(
       req.body.password,
-      parseInt(SaltRounds)
+      parseInt(SaltRounds),
     );
 
     // console.log(req.body);
@@ -121,7 +121,7 @@ exports.loginUser = async (req, res) => {
       SECRET_KEY,
       {
         expiresIn: "1h",
-      }
+      },
     );
     res.cookie("name", token, {
       httpOnly: true,
@@ -142,7 +142,6 @@ exports.logoutUser = async (req, res) => {
   res.json({ message: "Logout successful" });
 };
 
-
 exports.getSingleUser = async (req, res) => {
   // console.log("kk", req.cookies);
   const { name } = req.cookies;
@@ -152,10 +151,12 @@ exports.getSingleUser = async (req, res) => {
     const payload = jwt.verify(name, SECRET_KEY);
     // console.log("payload", payload);
 
-    const loginUser = await User.findOne({ name: payload.username }).populate(
-      "profile"
-    ).exec();
-    console.log("loginUser", loginUser.profile);
+    const loginUser = await User.findOne({ name: payload.username })
+      .populate({path: "profile",
+      populate: {path: "posts"}}) 
+      .exec();
+    
+    // console.log("loginUser", loginUser.profile);
 
     if (!loginUser) {
       return res.status(404).json({ message: "User not found" });

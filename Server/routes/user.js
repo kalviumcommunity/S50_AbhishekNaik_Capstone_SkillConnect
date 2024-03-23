@@ -8,7 +8,7 @@ const {
   updateUserById,
   loginUser,
   logoutUser,
-  getSingleUser
+  getSingleUser,
 } = require("../controllers/userControllers");
 const validateSignupUserData = require("../middleware/validateSignupUserData");
 const validateEditUserData = require("../middleware/validateEditUserData");
@@ -16,10 +16,7 @@ const validateLoginUserData = require("../middleware/validateLoginUserData");
 
 router.get("/", getAllUsers);
 
-
 router.post("/getsingle", getSingleUser);
-
-
 
 router.post("/", validateSignupUserData, createUser);
 router.post("/login", validateLoginUserData, loginUser);

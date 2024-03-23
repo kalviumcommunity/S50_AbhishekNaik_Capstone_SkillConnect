@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import axios from "axios";
@@ -18,7 +17,7 @@ const Homepage = () => {
         { h: "h" },
         {
           withCredentials: true,
-        }
+        },
       )
       .then((response) => {
         navigate("/login");
