@@ -18,7 +18,7 @@ const ProfilePage = () => {
         { h: "h" },
         {
           withCredentials: true,
-        }
+        },
       )
       .then((response) => {
         navigate("/login");
@@ -53,7 +53,7 @@ const ProfilePage = () => {
           {},
           {
             withCredentials: true,
-          }
+          },
         );
 
         if (response.status !== 200) {
@@ -83,7 +83,7 @@ const ProfilePage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <Navbar/>
+      <Navbar />
       <div className="flex">
         <Sidebar onLogout={handleLogout} />
         <motion.div

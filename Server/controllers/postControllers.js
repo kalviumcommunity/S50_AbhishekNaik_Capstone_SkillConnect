@@ -31,11 +31,14 @@ exports.createPost = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
+    console.log("rb", req.body);
     const newPost = new Post({
       title: req.body.title,
       description: req.body.description,
-      mediaUrl: req.body.mediaUrl,
+      imageUrl: req.body.imageUrl,
+      videoUrl: req.body.videoUrl,
     });
+    console.log(newPost);
     const result = await newPost.save();
     await Profile.findOneAndUpdate(
       { id: req.body.id },

@@ -152,8 +152,7 @@ exports.getSingleUser = async (req, res) => {
     // console.log("payload", payload);
 
     const loginUser = await User.findOne({ name: payload.username })
-      .populate({path: "profile",
-      populate: {path: "posts"}}) 
+      .populate({ path: "profile", populate: { path: "posts" } })
       .exec();
 
     if (!loginUser) {

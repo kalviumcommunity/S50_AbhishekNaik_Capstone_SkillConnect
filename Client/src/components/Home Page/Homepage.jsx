@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import axios from "axios";
-import Post from "../Posts/Posts"; 
+import Post from "../Posts/Posts";
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -15,13 +15,13 @@ const Homepage = () => {
     axios
       .get("http://localhost:3000/post")
       .then((response) => {
-        console.log("ss",response);
-        setPosts(response.data); 
+        console.log("Response from server:", response);
+        setPosts(response.data);
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
       });
-  }, []); 
+  }, []);
 
   const handleLogout = () => {
     axios
@@ -53,14 +53,18 @@ const Homepage = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
-        <div className=" justify-center mt-8">
-          {posts.map((post) => (
-            <Post
-              key={post.id} 
-              title={post.title}
-              description={post.description}
-            />
-          ))}
+        <div className="flex justify-center mt-8 w-full">
+          <div className="max-w-4xl w-full">
+            {posts.map((post) => (
+              <Post
+                key={post.id}
+                title={post.title}
+                description={post.description}
+                imageUrl={post.imageUrl}
+                videoUrl={post.videoUrl}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <motion.img
