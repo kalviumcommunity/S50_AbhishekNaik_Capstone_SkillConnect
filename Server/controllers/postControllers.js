@@ -6,7 +6,7 @@ const handleError = require("../utils/handleError ");
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find();
-    console.log(posts);
+    // console.log(posts);
     res.send(posts);
   } catch (error) {
     handleError(res, 500, "Server Error");
@@ -31,14 +31,14 @@ exports.createPost = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    console.log("rb", req.body);
+    // console.log("rb", req.body);
     const newPost = new Post({
       title: req.body.title,
       description: req.body.description,
       imageUrl: req.body.imageUrl,
       videoUrl: req.body.videoUrl,
     });
-    console.log(newPost);
+    // console.log(newPost);
     const result = await newPost.save();
     await Profile.findOneAndUpdate(
       { id: req.body.id },
