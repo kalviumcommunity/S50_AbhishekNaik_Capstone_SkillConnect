@@ -37,7 +37,7 @@ app.use(passport.session());
 
 app.use("/ping", pingRoute);
 app.use("/user", userRoute);
-app.use("/post", auth, postRoute);
+app.use("/post",  postRoute);
 app.use("/auth", authRoute);
 app.use("/homepage", (req, res) => {
   if (req.isAuthenticated()) {

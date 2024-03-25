@@ -1,16 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import axios from "axios";
+import Post from "../Posts/Posts"; 
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/post")
+      .then((response) => {
+        console.log("ss",response);
+        setPosts(response.data); 
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+      });
+  }, []); 
 
   const handleLogout = () => {
-    // console.log("Logout clicked");
     axios
       .post(
         "http://localhost:3000/user/logout",
@@ -40,6 +53,15 @@ const Homepage = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
+        <div className=" justify-center mt-8">
+          {posts.map((post) => (
+            <Post
+              key={post.id} 
+              title={post.title}
+              description={post.description}
+            />
+          ))}
+        </div>
       </div>
       <motion.img
         src="site-logo.png"

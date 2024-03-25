@@ -1,6 +1,6 @@
 import React from "react";
 
-const Post = ({ title, description, mediaUrl }) => {
+const Post = ({ title, description }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-4">
