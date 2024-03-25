@@ -8,8 +8,8 @@ import axios from "axios";
 const PostModal = ({ onClose }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [mediaUrl, setMediaUrl] = useState("");
-
+  const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   const handlePost = () => {
     axios
@@ -18,15 +18,13 @@ const PostModal = ({ onClose }) => {
         {
           title: title,
           description: description,
-          mediaUrl: mediaUrl,
+          imageUrl: imageUrl,
+          videoUrl: videoUrl,
         },
         {
           withCredentials: true,
         },
       )
-      // .then((response) => {
-      //   console.log(response);
-      // })
       .catch((error) => {
         console.error(error);
       });
@@ -71,12 +69,51 @@ const PostModal = ({ onClose }) => {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
-                    <Input
-                      type="file"
-                      className="w-full border rounded-md p-2 mb-2"
-                      value={mediaUrl}
-                      onChange={(e) => setMediaUrl(e.target.value)}
-                    />
+                    <div className="mb-2">
+                      <label
+                        htmlFor="imageUrl"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Image URL
+                      </label>
+                      <Input
+                        type="text"
+                        id="imageUrl"
+                        name="imageUrl"
+                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                      />
+                      {imageUrl && (
+                        <img
+                          src={imageUrl}
+                          alt="Image"
+                          className="mt-2 max-w-full"
+                        />
+                      )}
+                    </div>
+                    <div className="mb-2">
+                      <label
+                        htmlFor="videoUrl"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Video URL
+                      </label>
+                      <Input
+                        type="text"
+                        id="videoUrl"
+                        name="videoUrl"
+                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                      />
+                      {videoUrl && (
+                        <video controls className="mt-2 max-w-full">
+                          <source src={videoUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               </form>

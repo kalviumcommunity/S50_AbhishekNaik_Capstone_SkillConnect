@@ -1,23 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import axios from "axios";
+import Post from "../Posts/Posts";
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/post")
+      .then((response) => {
+        console.log("Response from server:", response);
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+        setError("There was an error fetching posts. Please try again.");
+      });
+  }, []);
+
+  const handleRetry = () => {
+    setError(null); // Clear the error state
+    // Retry fetching posts
+    axios
+      .get("http://localhost:3000/post")
+      .then((response) => {
+        console.log("Response from server:", response);
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching posts:", error);
+        setError("There was an error fetching posts. Please try again.");
+      });
+  };
 
   const handleLogout = () => {
-    // console.log("Logout clicked");
     axios
       .post(
         "http://localhost:3000/user/logout",
         { h: "h" },
         {
           withCredentials: true,
-        },
+        }
       )
       .then((response) => {
         navigate("/login");
@@ -40,6 +70,28 @@ const Homepage = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
+        <div className="flex justify-center mt-8 w-full">
+          <div className="max-w-4xl w-full">
+            {error ? (
+              <div className="text-red-500">
+                {error}
+                <button onClick={handleRetry} className="ml-2 underline">
+                  Retry
+                </button>
+              </div>
+            ) : (
+              posts.map((post) => (
+                <Post
+                  key={post.id}
+                  title={post.title}
+                  description={post.description}
+                  imageUrl={post.imageUrl}
+                  videoUrl={post.videoUrl}
+                />
+              ))
+            )}
+          </div>
+        </div>
       </div>
       <motion.img
         src="site-logo.png"
