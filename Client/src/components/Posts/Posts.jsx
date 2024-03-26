@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 const Post = ({ title, description, imageUrl, videoUrl }) => {
-  // Dummy functions for like and comment actions
+  const [expanded, setExpanded] = useState(false);
+
+  const toggleDescription = () => {
+    setExpanded(!expanded);
+  };
   const handleLike = () => {
     console.log("Liked!");
   };
@@ -18,42 +23,79 @@ const Post = ({ title, description, imageUrl, videoUrl }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="px-6 py-4 flex justify-between items-center">
+    <div className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6">
+      <div className="p-3 flex items-center">
+        <img src="" alt="Profile" className="w-10 h-10 rounded-full mr-3" />
         <div>
-          <h2 className="text-xl font-semibold mb-2">{title}</h2>
-          <p className="text-gray-700 mb-4">{description}</p>
+          <h2 className="text-lg font-semibold">Abhishek Naik</h2>
+          <p className="text-sm text-gray-600">
+            Enthusiastic Full Stack Developer
+          </p>
+        </div>
+      </div>
+      <div className="px-4 py-3">
+        <h2 className="text-lg font-semibold mb-1">{title}</h2>
+        {expanded ? (
+          <pre className="text-wrap">{description}</pre>
+        ) : (
+          <pre>{description.slice(0, 300)}...</pre>
+        )}
+        <button
+          className="text-blue-500 hover:underline"
+          onClick={toggleDescription}
+        >
+          {expanded ? "See Less" : "See More"}
+        </button>
+        <div
+          className="grid gap-10"
+          style={{ display: "flex", flexWrap: "wrap" }}
+        >
           {imageUrl && (
-            <img src={imageUrl} alt="Post Media" className="max-w-full" />
+            <img
+              src={imageUrl}
+              alt="Post Media"
+              className="w-1/2 mb-2 rounded-lg"
+              style={{ flexBasis: "50%", maxWidth: "45%" }}
+            />
           )}
           {videoUrl && (
-            <iframe src={videoUrl} allowFullScreen width={500} height={300} />
+            <iframe
+              src={videoUrl}
+              allowFullScreen
+              className="mb-2 rounded-lg"
+              style={{ flexBasis: "50%", maxWidth: "45%" }}
+            />
           )}
         </div>
+
         <div className="flex items-center">
-          <Button
-            variant="ghost"
-            onClick={handleLike}
-            className="bg-blue-200 hover:bg-blue-800 text-blue-500 font-bold py-1 px-2 rounded flex items-center mr-2"
-          >
-            <FaThumbsUp className="mr-1 text-sm" />
-            <span className="text-sm">Like</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleComment}
-            className="bg-green-200 hover:bg-green-800 text-green-500 font-bold py-1 px-2 rounded flex items-center mr-2"
-          >
-            <FaComment className="mr-1 text-sm" />
-            <span className="text-sm">Comment</span>
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={handleOptions}
-            className="bg-gray-200 hover:bg-gray-500 text-gray-800 font-bold py-1 px-2 rounded flex items-center"
-          >
-            <HiDotsHorizontal className="mr-1 text-sm" />
-          </Button>
+        <Button
+        size="lg"
+  variant="ghost"
+  onClick={handleLike}
+  className="text-gray-600 flex items-center mr-3 px-4 py-2"
+>
+  <FaThumbsUp className="mr-1" />
+  <span>Like</span>
+</Button>
+<Button
+size="lg"
+  variant="ghost"
+  onClick={handleComment}
+  className="text-gray-600 flex items-center mr-3 px-4 py-2"
+>
+  <FaComment className="mr-1" />
+  <span>Comment</span>
+</Button>
+<Button
+size="lg"
+  variant="ghost"
+  onClick={handleOptions}
+  className="text-gray-600 flex items-center px-4 py-2"
+>
+  <HiDotsHorizontal className="mr-1" />
+</Button>
+
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ const profileSchema = new mongoose.Schema({
   picture: String,
   email: String,
   bio: String,
+  description: String,
   skills: [String],
   posts: [
     {

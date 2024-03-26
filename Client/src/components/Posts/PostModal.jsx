@@ -23,7 +23,7 @@ const PostModal = ({ onClose }) => {
         },
         {
           withCredentials: true,
-        },
+        }
       )
       .catch((error) => {
         console.error(error);
@@ -57,18 +57,28 @@ const PostModal = ({ onClose }) => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="mt-2">
-                    <Textarea
-                      placeholder="Title"
-                      className="w-full border rounded-md p-2 mb-2"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <Textarea
-                      placeholder="Description"
-                      className="w-full border rounded-md p-2 mb-2"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                    />
+                    <label
+                      htmlFor="title"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Title
+                      <Textarea
+                        className="w-full border rounded-md p-2 mb-2"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                      />
+                    </label>
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Description
+                      <Textarea
+                        className="w-full border rounded-md p-2 mb-2"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </label>
                     <div className="mb-2">
                       <label
                         htmlFor="imageUrl"

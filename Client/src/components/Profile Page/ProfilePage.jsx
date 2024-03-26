@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import Post from "../Posts/Posts";
+import ProfilePosts from "../Posts/ProfilePosts";
 import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import ProfileInfo from "./ProfileInfo";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -94,10 +95,13 @@ const ProfilePage = () => {
         >
           <ProfileInfo user={user} />
           {posts.map((post, index) => (
-            <Post
+            <ProfilePosts
               key={index}
               title={post.title}
               description={post.description}
+              imageUrl={post.imageUrl}
+              videoUrl={post.videoUrl}
+              user={user}
             />
           ))}
         </motion.div>

@@ -16,7 +16,7 @@ const Homepage = () => {
     axios
       .get("http://localhost:3000/post")
       .then((response) => {
-        console.log("Response from server:", response);
+        // console.log("Response from server:", response);
         setPosts(response.data);
       })
       .catch((error) => {
