@@ -8,7 +8,7 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().populate("profile").exec();
+    const users = await User.find();
     res.send(users);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -16,7 +16,7 @@ exports.getAllUsers = async (req, res) => {
 };
 exports.getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params._id).populate("profile").exec();
+    const user = await User.findById(req.params._id);
     res.send(user);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -124,7 +124,7 @@ exports.loginUser = async (req, res) => {
       },
     );
     res.cookie("name", token, {
-      httpOnly: true,
+      httpOnly: false,
       // secure: true,
       maxAge: 3600000,
     });
@@ -137,7 +137,7 @@ exports.loginUser = async (req, res) => {
 };
 
 exports.logoutUser = async (req, res) => {
-  console.log("coming");
+  // console.log("coming");
   res.clearCookie("name", { httpOnly: true });
   res.json({ message: "Logout successful" });
 };

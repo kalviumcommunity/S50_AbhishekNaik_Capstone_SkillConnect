@@ -2,9 +2,9 @@ const Profile = require("../models/ProfileDetails");
 const jwt = require("jsonwebtoken");
 
 const auth = async (req, res, next) => {
+  // console.log("cookies", req.cookies.name);
   try {
-    // console.log("Name token", req.cookies);
-    // console.log(req.body);
+    // console.log("header",req.headers.cookie);
     const token = req.cookies.name || req.body.name || req.headers["name"];
     // console.log("token",token);
     if (!token) {

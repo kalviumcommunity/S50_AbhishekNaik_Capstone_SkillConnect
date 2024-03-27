@@ -64,6 +64,7 @@ const ProfilePage = () => {
         const data = response.data.user.profile;
         const userposts = response.data.user.profile.posts;
         // console.log("data", data);
+        // console.log("userposts", userposts);
         setUser(data);
         setPosts(userposts);
       } catch (error) {
@@ -73,6 +74,8 @@ const ProfilePage = () => {
 
     fetchData();
   }, []);
+
+  // console.log("user", user);
 
   // useEffect(() => {
   //   console.log("gdgd", user);

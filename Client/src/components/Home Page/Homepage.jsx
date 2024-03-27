@@ -14,7 +14,9 @@ const Homepage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/post")
+      .get("http://localhost:3000/post", {
+        withCredentials: true,
+      })
       .then((response) => {
         // console.log("Response from server:", response);
         setPosts(response.data);
@@ -29,9 +31,11 @@ const Homepage = () => {
     setError(null); // Clear the error state
     // Retry fetching posts
     axios
-      .get("http://localhost:3000/post")
+      .get("http://localhost:3000/post", {
+        withCredentials: true,
+      })
       .then((response) => {
-        console.log("Response from server:", response);
+        // console.log("Response from server:", response);
         setPosts(response.data);
       })
       .catch((error) => {
@@ -39,7 +43,7 @@ const Homepage = () => {
         setError("There was an error fetching posts. Please try again.");
       });
   };
-
+  // console.log(posts);
   const handleLogout = () => {
     axios
       .post(
@@ -47,7 +51,7 @@ const Homepage = () => {
         { h: "h" },
         {
           withCredentials: true,
-        }
+        },
       )
       .then((response) => {
         navigate("/login");
@@ -70,7 +74,7 @@ const Homepage = () => {
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
-        <div className="flex justify-center mt-8 w-full">
+        <div className="flex justify-center w-full">
           <div className="max-w-4xl w-full">
             {error ? (
               <div className="text-red-500">
@@ -87,6 +91,9 @@ const Homepage = () => {
                   description={post.description}
                   imageUrl={post.imageUrl}
                   videoUrl={post.videoUrl}
+                  createdBy={post.createdBy}
+                  picture={post.picture}
+                  bio={post.bio}
                 />
               ))
             )}

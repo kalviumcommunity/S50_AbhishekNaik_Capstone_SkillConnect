@@ -9,6 +9,7 @@ const ProfileInfo = ({ user }) => {
       </div>
     );
   }
+  // console.log(user);
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -28,7 +29,13 @@ const ProfileInfo = ({ user }) => {
           <p className="mt-2 text-gray-600">{user.bio || "No bio available"}</p>
         </div>
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800">Skills</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Description</h2>
+          <p className="mt-2 text-gray-600">
+            {user.description || "No description available"}
+          </p>
+        </div>
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold text-gray-800">My TechStack</h2>
           <ul className="mt-2 grid grid-cols-2 gap-4">
             {user.skills && user.skills.length > 0 ? (
               user.skills.map((skill, index) => (
