@@ -22,7 +22,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 app.use(
   session({
@@ -30,14 +30,14 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
-  })
+  }),
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/ping", pingRoute);
 app.use("/user", userRoute);
-app.use("/post", postRoute);
+app.use("/post", auth, postRoute);
 app.use("/auth", authRoute);
 app.use("/homepage", (req, res) => {
   if (req.isAuthenticated()) {

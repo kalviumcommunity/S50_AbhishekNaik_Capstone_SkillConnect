@@ -37,18 +37,20 @@ exports.createPost = async (req, res) => {
       description: req.body.description,
       imageUrl: req.body.imageUrl,
       videoUrl: req.body.videoUrl,
+      createdBy: req.user.name,
+      picture: req.user.picture,
+      bio: req.user.bio,
     });
-    // console.log(newPost);
     const result = await newPost.save();
     await Profile.findOneAndUpdate(
-      { id: req.body.id },
+      { _id: req.user._id },
       { $push: { posts: result._id } },
       { new: true },
     )
       .populate("posts")
       .exec();
-
     res.send(result);
+    // console.log(req.user)
   } catch (error) {
     handleError(res, 500, "Server Error");
   }

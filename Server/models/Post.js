@@ -17,11 +17,13 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  createdAt: Date,
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Profile",
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
+  createdBy: String,
+  picture: String,
+  bio: String,
 });
 
 module.exports = mongoose.model("Post", postSchema);
