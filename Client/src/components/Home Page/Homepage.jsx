@@ -28,8 +28,7 @@ const Homepage = () => {
   }, []);
 
   const handleRetry = () => {
-    setError(null); // Clear the error state
-    // Retry fetching posts
+    setError(null); 
     axios
       .get("http://localhost:3000/post", {
         withCredentials: true,
