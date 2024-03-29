@@ -25,6 +25,8 @@ const Post = ({
     likes: 0,
   });
 
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
   const handleLike = async () => {
     try {
       const response = await axios.put(`http://localhost:3000/post/${postId}`, { action: 'like' }, {
@@ -37,7 +39,11 @@ const Post = ({
   };
 
   const handleComment = () => {
-    console.log("Commented!");
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
   };
 
   const handleOptions = () => {
@@ -89,6 +95,34 @@ const Post = ({
           </Button>
         </div>
       </div>
+      {isCommentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md w-96">
+            <h2 className="text-lg font-semibold mb-2">Comment Modal</h2>
+            <textarea
+              placeholder="Write your comment here..."
+              className="w-full p-2 border rounded-md resize-none"
+              style={{ minWidth: "calc(100% - 2rem)" }}
+            ></textarea>
+            <div className="mt-2 flex justify-end">
+              <Button
+                onClick={handleCloseCommentModal}
+                className="mr-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                onClick={() => {
+                  handleCloseCommentModal();
+                }}
+              >
+                Post Comment
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
