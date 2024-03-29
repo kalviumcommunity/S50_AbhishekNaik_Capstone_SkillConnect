@@ -28,7 +28,7 @@ const Homepage = () => {
   }, []);
 
   const handleRetry = () => {
-    setError(null); 
+    setError(null);
     axios
       .get("http://localhost:3000/post", {
         withCredentials: true,
@@ -50,7 +50,7 @@ const Homepage = () => {
         { h: "h" },
         {
           withCredentials: true,
-        },
+        }
       )
       .then((response) => {
         navigate("/login");
@@ -66,8 +66,10 @@ const Homepage = () => {
 
   const handleLike = async (postId) => {
     try {
-      const response = await axios.put(`http://localhost:3000/post/${postId}`, { action: 'like' });
-      const updatedPosts = posts.map(post => {
+      const response = await axios.put(`http://localhost:3000/post/${postId}`, {
+        action: "like",
+      });
+      const updatedPosts = posts.map((post) => {
         if (post._id === postId) {
           return { ...post, likes: response.data.likes };
         }
@@ -76,6 +78,7 @@ const Homepage = () => {
       setPosts(updatedPosts);
     } catch (error) {
       console.error("Like error:", error);
+      setError("There was an error while liking the post. Please try again.");
     }
   };
 
