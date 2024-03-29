@@ -45,7 +45,7 @@ exports.createPost = async (req, res) => {
     await Profile.findOneAndUpdate(
       { _id: req.user._id },
       { $push: { posts: result._id } },
-      { new: true },
+      { new: true }
     )
       .populate("posts")
       .exec();
@@ -74,12 +74,29 @@ exports.updatePostById = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
+    const postId = req.params.id;
+    const updatedFields = req.body;
+
+    // Check if the request includes a 'like' action
+    if (updatedFields.action === "like") {
+      // Increment the 'likes' count for the post
+      const updatedPost = await Post.findByIdAndUpdate(
+        postId,
+        { $inc: { likes: 1 } },
+        { new: true }
+      );
+      return res.json(updatedPost);
+    }
+    console.log(updatedFields);
+    // Otherwise, update the post with the provided fields
+    const updatedPost = await Post.findByIdAndUpdate(postId, updatedFields, {
       new: true,
     });
+
     if (!updatedPost) {
       return handleError(res, 404, "Post not found");
     }
+
     res.send(updatedPost);
   } catch (error) {
     handleError(res, 500, "Server Error");

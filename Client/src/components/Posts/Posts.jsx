@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Button } from "../ui/button";
@@ -12,18 +12,38 @@ const Post = ({
   createdBy,
   picture,
   bio,
+  postId,
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [post, setPost] = useState({
+    title,
+    description,
+    imageUrl,
+    videoUrl,
+    createdBy,
+    picture,
+    bio,
+    likes: 0,
+  });
 
-  const toggleDescription = () => {
-    setExpanded(!expanded);
-  };
-  const handleLike = () => {
-    console.log("Liked!");
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
+  const handleLike = async () => {
+    try {
+      const response = await axios.put(`http://localhost:3000/post/${postId}`, { action: 'like' }, {
+        withCredentials: true,
+      });
+      setPost(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleComment = () => {
-    console.log("Commented!");
+    setIsCommentModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
   };
 
   const handleOptions = () => {
@@ -44,40 +64,8 @@ const Post = ({
         </div>
       </div>
       <div className="px-4 py-3">
-        <h2 className="text-lg font-semibold mb-1">{title}</h2>
-        {expanded ? (
-          <pre className="text-wrap">{description}</pre>
-        ) : (
-          <pre>{description.slice(0, 300)}...</pre>
-        )}
-        <button
-          className="text-blue-500 hover:underline"
-          onClick={toggleDescription}
-        >
-          {expanded ? "See Less" : "See More"}
-        </button>
-        <div
-          className="grid gap-10"
-          style={{ display: "flex", flexWrap: "wrap" }}
-        >
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="Post Media"
-              className="w-1/2 mb-2 rounded-lg"
-              style={{ flexBasis: "50%", maxWidth: "45%" }}
-            />
-          )}
-          {videoUrl && (
-            <iframe
-              src={videoUrl}
-              allowFullScreen
-              className="mb-2 rounded-lg"
-              style={{ flexBasis: "50%", maxWidth: "45%" }}
-            />
-          )}
-        </div>
-
+        <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
+        <p>{post.description}</p>
         <div className="flex items-center">
           <Button
             size="lg"
@@ -86,7 +74,7 @@ const Post = ({
             className="text-gray-600 flex items-center mr-3 px-4 py-2"
           >
             <FaThumbsUp className="mr-1" />
-            <span>Like</span>
+            <span>{post.likes} Likes</span>
           </Button>
           <Button
             size="lg"
@@ -107,6 +95,34 @@ const Post = ({
           </Button>
         </div>
       </div>
+      {isCommentModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md w-96">
+            <h2 className="text-lg font-semibold mb-2">Comment Modal</h2>
+            <textarea
+              placeholder="Write your comment here..."
+              className="w-full p-2 border rounded-md resize-none"
+              style={{ minWidth: "calc(100% - 2rem)" }}
+            ></textarea>
+            <div className="mt-2 flex justify-end">
+              <Button
+                onClick={handleCloseCommentModal}
+                className="mr-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                onClick={() => {
+                  handleCloseCommentModal();
+                }}
+              >
+                Post Comment
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
