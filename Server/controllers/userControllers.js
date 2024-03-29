@@ -8,7 +8,7 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().populate("profile").exec(); 
+    const users = await User.find().populate("profile").exec();
     res.send(users);
   } catch (error) {
     res.status(500).send("500-Server Error");
@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(
       req.body.password,
-      parseInt(SaltRounds),
+      parseInt(SaltRounds)
     );
 
     // console.log(req.body);
@@ -106,7 +106,7 @@ exports.loginUser = async (req, res) => {
     if (!profile) {
       try {
         profile = new Profile({ name: user.name, email: user.email });
-        profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
+        profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360&radius=0,100&backgroundColor=b6e3f4,c0aede,d1d4f9&fontFamily=Arial,Brush%20Script%20MT,Courier%20New`;
         await profile.save();
         user.profile = profile._id;
         await user.save();
@@ -121,7 +121,7 @@ exports.loginUser = async (req, res) => {
       SECRET_KEY,
       {
         expiresIn: "1h",
-      },
+      }
     );
     res.cookie("name", token, {
       httpOnly: true,

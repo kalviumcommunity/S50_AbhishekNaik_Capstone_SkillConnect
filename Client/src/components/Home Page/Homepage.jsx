@@ -42,7 +42,7 @@ const Homepage = () => {
         setError("There was an error fetching posts. Please try again.");
       });
   };
-  // console.log(posts);
+
   const handleLogout = () => {
     axios
       .post(
@@ -62,6 +62,21 @@ const Homepage = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleLike = async (postId) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/post/${postId}`, { action: 'like' });
+      const updatedPosts = posts.map(post => {
+        if (post._id === postId) {
+          return { ...post, likes: response.data.likes };
+        }
+        return post;
+      });
+      setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Like error:", error);
+    }
   };
 
   return (
@@ -85,7 +100,8 @@ const Homepage = () => {
             ) : (
               posts.map((post) => (
                 <Post
-                  key={post.id}
+                  key={post._id}
+                  postId={post._id}
                   title={post.title}
                   description={post.description}
                   imageUrl={post.imageUrl}
@@ -93,6 +109,8 @@ const Homepage = () => {
                   createdBy={post.createdBy}
                   picture={post.picture}
                   bio={post.bio}
+                  likes={post.likes}
+                  onLike={handleLike}
                 />
               ))
             )}
