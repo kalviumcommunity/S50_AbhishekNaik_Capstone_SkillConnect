@@ -3,6 +3,7 @@ import { FaThumbsUp, FaComment, FaTrash, FaEdit } from "react-icons/fa";
 import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const Post = ({
   title,
@@ -30,9 +31,13 @@ const Post = ({
 
   const handleLike = async () => {
     try {
-      const response = await axios.put(`http://localhost:3000/post/${postId}`, { action: 'like' }, {
-        withCredentials: true,
-      });
+      const response = await axios.put(
+        `http://localhost:3000/post/${postId}`,
+        { action: "like" },
+        {
+          withCredentials: true,
+        }
+      );
       setPost(response.data);
     } catch (error) {
       console.error(error);
@@ -66,39 +71,51 @@ const Post = ({
       }
     }
   };
-  
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/post');
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
-
 
   const handleEdit = () => {
     console.log("Edit clicked!");
   };
 
   return (
-    <div className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6">
-      <div className="p-3 flex items-center">
-        <img
+    <motion.div
+      className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="p-3 flex items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <motion.img
           src={picture}
           alt="Profile"
           className="w-10 h-10 rounded-full mr-3"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 300 }}
         />
         <div>
           <h2 className="text-lg font-semibold">{createdBy}</h2>
           <p className="text-sm text-gray-600">{bio}</p>
         </div>
-      </div>
-      <div className="px-4 py-3">
+      </motion.div>
+      <motion.div
+        className="px-4 py-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
         <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
         <p>{post.description}</p>
-        <div className="flex flex-wrap items-center">
+        <motion.div
+          className="flex flex-wrap items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
           <Button
             size="lg"
             variant="ghost"
@@ -135,11 +152,21 @@ const Post = ({
             <FaEdit className="mr-1" />
             <span>Edit</span>
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       {isCommentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md w-96">
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="bg-white p-6 rounded-md w-96"
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <h2 className="text-lg font-semibold mb-2">Comment Modal</h2>
             <textarea
               placeholder="Write your comment here..."
@@ -162,10 +189,10 @@ const Post = ({
                 Post Comment
               </Button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
