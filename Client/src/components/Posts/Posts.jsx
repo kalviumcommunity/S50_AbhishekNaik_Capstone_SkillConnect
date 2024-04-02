@@ -47,28 +47,36 @@ const Post = ({
     setIsCommentModalOpen(false);
   };
 
-  const handleDelete = () => {
-    console.log("Delete clicked!");
-    try {
-      axios
-        .delete(`http://localhost:3000/post/${postId}`, {
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete?");
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`http://localhost:3000/post/${postId}`, {
           withCredentials: true,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          const message = error.response.data.error;
-          console.log(message);
-          toast({
-            variant: "destructive",
-            title: message,
-          })
         });
+        console.log(response.data);
+        window.location.reload();
+      } catch (error) {
+        const message = error.response.data.error;
+        console.log(message);
+        toast({
+          variant: "destructive",
+          title: message,
+        });
+      }
+    }
+  };
+  
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/post');
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  
+
 
   const handleEdit = () => {
     console.log("Edit clicked!");
