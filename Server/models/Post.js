@@ -18,6 +18,7 @@ const postSchema = new mongoose.Schema({
     default: Date.now,
   },
   createdBy: String,
+  createdByID: String,
   picture: String,
   bio: String,
 });
