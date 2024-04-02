@@ -106,7 +106,7 @@ exports.loginUser = async (req, res) => {
     if (!profile) {
       try {
         profile = new Profile({ name: user.name, email: user.email });
-        profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360&radius=0,100&backgroundColor=b6e3f4,c0aede,d1d4f9&fontFamily=Arial,Brush%20Script%20MT,Courier%20New`;
+        profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
         await profile.save();
         user.profile = profile._id;
         await user.save();

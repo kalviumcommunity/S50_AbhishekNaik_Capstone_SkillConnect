@@ -1,7 +1,10 @@
 const Post = require("../models/Post");
 const { validationResult } = require("express-validator");
 const Profile = require("../models/ProfileDetails");
-const handleError = require("../utils/handleError ");
+
+const handleError = (res, statusCode, message) => {
+  res.status(statusCode).send({ error: message });
+};
 
 exports.getAllPosts = async (req, res) => {
   try {
@@ -38,6 +41,7 @@ exports.createPost = async (req, res) => {
       imageUrl: req.body.imageUrl,
       videoUrl: req.body.videoUrl,
       createdBy: req.user.name,
+      createdByID: req.user._id,
       picture: req.user.picture,
       bio: req.user.bio,
     });
@@ -55,14 +59,30 @@ exports.createPost = async (req, res) => {
     handleError(res, 500, "Server Error");
   }
 };
+// console.log(req.user._id);
+// console.log(req.user._id.toString());
 
 exports.deletePostById = async (req, res) => {
   try {
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);
+    const deletedPost = await Post.findById(req.params.id);
+    console.log("deletedPost", deletedPost.createdByID);
+    // console.log("req.user._id", req.user._id);
     if (!deletedPost) {
       return handleError(res, 404, "Post not found");
     }
-    res.send(deletedPost);
+    const userID = req.user._id.toString();
+    console.log("userID", userID);
+    if (deletedPost.createdByID !== userID) {
+      return handleError(
+        res,
+        403,
+        "Unauthorized: You are not allowed to delete this post"
+      );
+    }
+    // await deletedPost.remove();
+    await deletedPost.deleteOne();
+    console.log("Hitting here");
+    res.send({ message: "Post deleted successfully" });
   } catch (error) {
     handleError(res, 500, "Server Error");
   }
@@ -87,7 +107,7 @@ exports.updatePostById = async (req, res) => {
       );
       return res.json(updatedPost);
     }
-    console.log(updatedFields);
+    // console.log(updatedFields);
     // Otherwise, update the post with the provided fields
     const updatedPost = await Post.findByIdAndUpdate(postId, updatedFields, {
       new: true,

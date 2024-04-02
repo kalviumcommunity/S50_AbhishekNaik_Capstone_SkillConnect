@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FaThumbsUp, FaComment } from "react-icons/fa";
-import { HiDotsHorizontal } from "react-icons/hi";
+import { FaThumbsUp, FaComment, FaTrash, FaEdit } from "react-icons/fa";
+import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import axios from "axios";
 
@@ -26,6 +26,7 @@ const Post = ({
   });
 
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleLike = async () => {
     try {
@@ -46,8 +47,31 @@ const Post = ({
     setIsCommentModalOpen(false);
   };
 
-  const handleOptions = () => {
-    console.log("Options clicked!");
+  const handleDelete = () => {
+    console.log("Delete clicked!");
+    try {
+      axios
+        .delete(`http://localhost:3000/post/${postId}`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          const message = error.response.data.error;
+          console.log(message);
+          toast({
+            variant: "destructive",
+            title: message,
+          })
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdit = () => {
+    console.log("Edit clicked!");
   };
 
   return (
@@ -66,12 +90,12 @@ const Post = ({
       <div className="px-4 py-3">
         <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
         <p>{post.description}</p>
-        <div className="flex items-center">
+        <div className="flex flex-wrap items-center">
           <Button
             size="lg"
             variant="ghost"
             onClick={handleLike}
-            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
           >
             <FaThumbsUp className="mr-1" />
             <span>{post.likes} Likes</span>
@@ -80,7 +104,7 @@ const Post = ({
             size="lg"
             variant="ghost"
             onClick={handleComment}
-            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
           >
             <FaComment className="mr-1" />
             <span>Comment</span>
@@ -88,10 +112,20 @@ const Post = ({
           <Button
             size="lg"
             variant="ghost"
-            onClick={handleOptions}
+            onClick={handleDelete}
+            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
+          >
+            <FaTrash className="mr-1" />
+            <span>Delete</span>
+          </Button>
+          <Button
+            size="lg"
+            variant="ghost"
+            onClick={handleEdit}
             className="text-gray-600 flex items-center px-4 py-2"
           >
-            <HiDotsHorizontal className="mr-1" />
+            <FaEdit className="mr-1" />
+            <span>Edit</span>
           </Button>
         </div>
       </div>
