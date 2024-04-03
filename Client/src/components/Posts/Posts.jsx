@@ -101,7 +101,7 @@ const Post = ({
       handleCloseEditModal();
     } catch (error) {
       const message = error.response.data.error;
-      console.log(message);
+      // console.log(message);
       toast({
         variant: "destructive",
         title: message,

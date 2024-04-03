@@ -114,7 +114,9 @@ exports.updatePostById = async (req, res) => {
     }
 
     const userID = req.user._id.toString();
-    if (post.createdByID !== userID) {
+    const postCreatorID = post.createdByID.toString();
+
+    if (postCreatorID !== userID) {
       return handleError(
         res,
         403,
