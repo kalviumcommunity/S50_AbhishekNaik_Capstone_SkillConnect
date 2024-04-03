@@ -65,13 +65,13 @@ exports.createPost = async (req, res) => {
 exports.deletePostById = async (req, res) => {
   try {
     const deletedPost = await Post.findById(req.params.id);
-    console.log("deletedPost", deletedPost.createdByID);
+    // console.log("deletedPost", deletedPost.createdByID);
     // console.log("req.user._id", req.user._id);
     if (!deletedPost) {
       return handleError(res, 404, "Post not found");
     }
     const userID = req.user._id.toString();
-    console.log("userID", userID);
+    // console.log("userID", userID);
     if (deletedPost.createdByID !== userID) {
       return handleError(
         res,
@@ -81,7 +81,7 @@ exports.deletePostById = async (req, res) => {
     }
     // await deletedPost.remove();
     await deletedPost.deleteOne();
-    console.log("Hitting here");
+    // console.log("Hitting here");
     res.send({ message: "Post deleted successfully" });
   } catch (error) {
     handleError(res, 500, "Server Error");
@@ -107,8 +107,23 @@ exports.updatePostById = async (req, res) => {
       );
       return res.json(updatedPost);
     }
-    // console.log(updatedFields);
-    // Otherwise, update the post with the provided fields
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return handleError(res, 404, "Post not found");
+    }
+
+    const userID = req.user._id.toString();
+    const postCreatorID = post.createdByID.toString();
+
+    if (postCreatorID !== userID) {
+      return handleError(
+        res,
+        403,
+        "Unauthorized: You are not allowed to update this post"
+      );
+    }
+
     const updatedPost = await Post.findByIdAndUpdate(postId, updatedFields, {
       new: true,
     });

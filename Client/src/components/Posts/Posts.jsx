@@ -27,6 +27,14 @@ const Post = ({
   });
 
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedPost, setEditedPost] = useState({
+    title: post.title,
+    description: post.description,
+    imageUrl: post.imageUrl,
+    videoUrl: post.videoUrl,
+  });
+
   const { toast } = useToast();
 
   const handleLike = async () => {
@@ -59,7 +67,7 @@ const Post = ({
         const response = await axios.delete(`http://localhost:3000/post/${postId}`, {
           withCredentials: true,
         });
-        console.log(response.data);
+        // console.log(response.data);
         window.location.reload();
       } catch (error) {
         const message = error.response.data.error;
@@ -73,7 +81,32 @@ const Post = ({
   };
 
   const handleEdit = () => {
-    console.log("Edit clicked!");
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleUpdatePost = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/post/${postId}`,
+        editedPost,
+        {
+          withCredentials: true,
+        }
+      );
+      setPost(response.data);
+      handleCloseEditModal();
+    } catch (error) {
+      const message = error.response.data.error;
+      // console.log(message);
+      toast({
+        variant: "destructive",
+        title: message,
+      });
+    }
   };
 
   return (
@@ -187,6 +220,58 @@ const Post = ({
                 }}
               >
                 Post Comment
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+      {isEditModalOpen && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="bg-white p-6 rounded-md w-96"
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <h2 className="text-lg font-semibold mb-2">Edit Post</h2>
+            <input
+              type="text"
+              placeholder="Title"
+              value={editedPost.title}
+              onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })}
+              className="w-full p-2 border rounded-md mb-2"
+            />
+            <textarea
+              placeholder="Description"
+              value={editedPost.description}
+              onChange={(e) => setEditedPost({ ...editedPost, description: e.target.value })}
+              className="w-full p-2 border rounded-md resize-none mb-2"
+              rows="4"
+            ></textarea>
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={editedPost.imageUrl}
+              onChange={(e) => setEditedPost({ ...editedPost, imageUrl: e.target.value })}
+              className="w-full p-2 border rounded-md mb-2"
+            />
+            <div className="mt-2 flex justify-end">
+              <Button
+                onClick={handleCloseEditModal}
+                className="mr-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                onClick={handleUpdatePost}
+              >
+                Update
               </Button>
             </div>
           </motion.div>
