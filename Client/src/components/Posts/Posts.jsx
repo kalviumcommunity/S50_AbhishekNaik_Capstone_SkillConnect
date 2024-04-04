@@ -82,7 +82,7 @@ const fetchposts = async () => {
             withCredentials: true,
           }
         );
-        // window.location.reload();
+        window.location.reload();
       } catch (error) {
         const message = error.response.data.error;
         console.log(message);
@@ -117,6 +117,7 @@ const fetchposts = async () => {
       );
       setPost(response.data);
       handleCloseEditModal();
+      window.location.reload();
     } catch (error) {
       const message = error.response.data.error;
       toast({
