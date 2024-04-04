@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaThumbsUp, FaComment, FaTrash, FaEdit } from "react-icons/fa";
-import { useToast } from "../ui/use-toast";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { motion } from "framer-motion";
+// import { Link } from "react-router-dom";
 
 const Post = ({
   title,
@@ -15,6 +16,15 @@ const Post = ({
   bio,
   postId,
 }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedPost, setEditedPost] = useState({
+    title,
+    description,
+    imageUrl,
+    videoUrl,
+  });
   const [post, setPost] = useState({
     title,
     description,
@@ -26,16 +36,22 @@ const Post = ({
     likes: 0,
   });
 
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editedPost, setEditedPost] = useState({
-    title: post.title,
-    description: post.description,
-    imageUrl: post.imageUrl,
-    videoUrl: post.videoUrl,
-  });
-
   const { toast } = useToast();
+
+  const toggleDescription = () => {
+    setExpanded(!expanded);
+  };
+
+const fetchposts = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/post`);
+    setPost(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+ 
 
   const handleLike = async () => {
     try {
@@ -56,19 +72,17 @@ const Post = ({
     setIsCommentModalOpen(true);
   };
 
-  const handleCloseCommentModal = () => {
-    setIsCommentModalOpen(false);
-  };
-
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (confirmDelete) {
       try {
-        const response = await axios.delete(`http://localhost:3000/post/${postId}`, {
-          withCredentials: true,
-        });
-        // console.log(response.data);
-        window.location.reload();
+        const response = await axios.delete(
+          `http://localhost:3000/post/${postId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        // window.location.reload();
       } catch (error) {
         const message = error.response.data.error;
         console.log(message);
@@ -82,6 +96,10 @@ const Post = ({
 
   const handleEdit = () => {
     setIsEditModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
   };
 
   const handleCloseEditModal = () => {
@@ -101,7 +119,6 @@ const Post = ({
       handleCloseEditModal();
     } catch (error) {
       const message = error.response.data.error;
-      // console.log(message);
       toast({
         variant: "destructive",
         title: message,
@@ -116,90 +133,104 @@ const Post = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div
-        className="p-3 flex items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <motion.img
+       {/* <div className="p-3 flex items-center">
+        <Link to={`/profile/${createdBy}`} className="flex items-center">
+          <img
+            src={picture}
+            alt="Profile"
+            className="w-10 h-10 rounded-full mr-3"
+          />
+          <h2 className="text-lg font-semibold">{createdBy}</h2>
+        </Link>
+        <div>
+          <p className="text-sm text-gray-600">{bio}</p>
+        </div>
+      </div> */}
+      <div className="p-3 flex items-center">
+        <img
           src={picture}
           alt="Profile"
           className="w-10 h-10 rounded-full mr-3"
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 300 }}
         />
         <div>
           <h2 className="text-lg font-semibold">{createdBy}</h2>
           <p className="text-sm text-gray-600">{bio}</p>
         </div>
-      </motion.div>
-      <motion.div
-        className="px-4 py-3"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
-        <p>{post.description}</p>
-        <motion.div
-          className="flex flex-wrap items-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <Button
+      </div>
+      <div className="px-4 py-3">
+    <h2 className="text-lg font-semibold mb-1">{title}</h2>
+    {expanded ? (
+        <pre className="text-wrap">{description}</pre>
+    ) : (
+        <pre>{description.slice(0, 300)}...</pre>
+    )}
+    <button
+        className="text-blue-500 hover:underline"
+        onClick={toggleDescription}
+    >
+        {expanded ? "See Less" : "See More"}
+    </button>
+    <div className="flex gap-1">
+        {imageUrl && (
+            <img
+                src={imageUrl}
+                alt="Post Media"
+                className="w-full md:w-1/2 mb-2 rounded-lg"
+            />
+        )}
+        {videoUrl && (
+            <div className="w-full md:w-1/2 mb-2 rounded-lg">
+                <iframe
+                    src={videoUrl}
+                    allowFullScreen
+                    className="w-full h-full rounded-lg"
+                />
+            </div>
+        )}
+    </div>
+    <div className="flex items-center">
+        <Button
             size="lg"
             variant="ghost"
             onClick={handleLike}
-            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
-          >
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+        >
             <FaThumbsUp className="mr-1" />
             <span>{post.likes} Likes</span>
-          </Button>
-          <Button
+        </Button>
+        <Button
             size="lg"
             variant="ghost"
             onClick={handleComment}
-            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
-          >
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+        >
             <FaComment className="mr-1" />
             <span>Comment</span>
-          </Button>
-          <Button
+        </Button>
+        <Button
             size="lg"
             variant="ghost"
             onClick={handleDelete}
-            className="text-gray-600 flex items-center mr-3 mb-2 lg:mb-0 lg:mr-4 px-4 py-2"
-          >
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+        >
             <FaTrash className="mr-1" />
             <span>Delete</span>
-          </Button>
-          <Button
+        </Button>
+        <Button
             size="lg"
             variant="ghost"
             onClick={handleEdit}
             className="text-gray-600 flex items-center px-4 py-2"
-          >
+        >
             <FaEdit className="mr-1" />
             <span>Edit</span>
-          </Button>
-        </motion.div>
-      </motion.div>
+        </Button>
+    </div>
+</div>
+
       {isCommentModalOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.div
-            className="bg-white p-6 rounded-md w-96"
-            initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md w-96">
             <h2 className="text-lg font-semibold mb-2">Comment Modal</h2>
             <textarea
               placeholder="Write your comment here..."
@@ -222,34 +253,28 @@ const Post = ({
                 Post Comment
               </Button>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
       {isEditModalOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.div
-            className="bg-white p-6 rounded-md w-96"
-            initial={{ scale: 0.5 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md w-96">
             <h2 className="text-lg font-semibold mb-2">Edit Post</h2>
             <input
               type="text"
               placeholder="Title"
               value={editedPost.title}
-              onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, title: e.target.value })
+              }
               className="w-full p-2 border rounded-md mb-2"
             />
             <textarea
               placeholder="Description"
               value={editedPost.description}
-              onChange={(e) => setEditedPost({ ...editedPost, description: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, description: e.target.value })
+              }
               className="w-full p-2 border rounded-md resize-none mb-2"
               rows="4"
             ></textarea>
@@ -257,7 +282,18 @@ const Post = ({
               type="text"
               placeholder="Image URL"
               value={editedPost.imageUrl}
-              onChange={(e) => setEditedPost({ ...editedPost, imageUrl: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, imageUrl: e.target.value })
+              }
+              className="w-full p-2 border rounded-md mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Video URL"
+              value={editedPost.videoUrl}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, videoUrl: e.target.value })
+              }
               className="w-full p-2 border rounded-md mb-2"
             />
             <div className="mt-2 flex justify-end">
@@ -274,8 +310,8 @@ const Post = ({
                 Update
               </Button>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
     </motion.div>
   );
