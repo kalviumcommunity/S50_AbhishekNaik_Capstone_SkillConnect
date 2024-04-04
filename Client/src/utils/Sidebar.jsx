@@ -3,30 +3,29 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { AiOutlineUser } from "react-icons/ai";
 import { FaEnvelope } from "react-icons/fa";
 import { MdLibraryAdd } from "react-icons/md";
-import { Button } from "../components/ui/button";
+import PostModal from "../components/Posts/PostModal"; // Import the PostModal component
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ onLogout }) => {
   const [expanded, setExpanded] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State to control the modal
 
   const handleMouseEnter = () => setExpanded(true);
   const handleMouseLeave = () => setExpanded(false);
 
-  const renderButton = (onClick, text, bgColor) => {
-    return (
-      <Button
-        variant="ghost"
-        onClick={onClick}
-        className={`${
-          expanded ? `bg-${bgColor}-500 hover:bg-${bgColor}-700` : "text-white"
-        } font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 ${
-          expanded ? `focus:ring-${bgColor}-500` : ""
-        }`}
-        style={{ transition: "background-color 0.3s" }}
-      >
-        {text}
-      </Button>
-    );
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate("/profile");
+  };
+
+  const handlePost = () => {
+    // Handle post button click
+    setShowModal(true); // Show the modal
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false); // Close the modal
   };
 
   const renderIcon = (onClick, IconComponent) => {
@@ -40,17 +39,6 @@ const Sidebar = ({ onLogout }) => {
     );
   };
 
-  const navigate = useNavigate();
-
-  const handleRedirect = () => {
-    navigate("/profile");
-  };
-
-  const handlePost = () => {
-    // Handle post button click
-    console.log("Post button clicked");
-  };
-
   return (
     <div
       className={`bg-gray-900 sticky text-white h-screen p-4 transition-all duration-300 ${
@@ -62,33 +50,61 @@ const Sidebar = ({ onLogout }) => {
       <div className="mb-8">
         {/* Profile Button */}
         {expanded
-          ? renderButton(handleRedirect, "Profile", "blue")
+          ? (
+            <button
+              onClick={handleRedirect}
+              className="text-white font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-500 hover:bg-blue-700"
+              style={{ transition: "background-color 0.3s" }}
+            >
+              Profile
+            </button>
+          )
           : renderIcon(handleRedirect, AiOutlineUser)}
 
         {/* Messages Button */}
         {expanded
-          ? renderButton(
-              () => console.log("Messages button clicked"),
-              "Messages",
-              "blue",
-            )
-          : renderIcon(
-              () => console.log("Messages button clicked"),
-              FaEnvelope,
-            )}
+          ? (
+            <button
+              onClick={() => console.log("Messages button clicked")}
+              className="text-white font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-500 hover:bg-blue-700"
+              style={{ transition: "background-color 0.3s" }}
+            >
+              Messages
+            </button>
+          )
+          : renderIcon(() => console.log("Messages button clicked"), FaEnvelope)}
 
         {/* Post Button */}
         {expanded
-          ? renderButton(handlePost, "Add Post", "blue")
+          ? (
+            <button
+              onClick={handlePost}
+              className="text-white font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-500 hover:bg-blue-700"
+              style={{ transition: "background-color 0.3s" }}
+            >
+              Add Post
+            </button>
+          )
           : renderIcon(handlePost, MdLibraryAdd)}
 
         {/* Logout Button */}
         <div style={{ position: "absolute", bottom: 0 }}>
           {expanded
-            ? renderButton(onLogout, "Logout", "red")
+            ? (
+              <button
+                onClick={onLogout}
+                className="text-white font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-red-500 bg-red-500 hover:bg-red-700"
+                style={{ transition: "background-color 0.3s" }}
+              >
+                Logout
+              </button>
+            )
             : renderIcon(onLogout, RiLogoutBoxLine)}
         </div>
       </div>
+
+      {/* Render the PostModal if showModal state is true */}
+      {showModal && <PostModal onClose={handleModalClose} />}
     </div>
   );
 };
