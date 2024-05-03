@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { slides } from "../../utils/Slides";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const LoginPage = () => {
     name: "",
     password: "",
   });
-
+  const [errors, setErrors] = useState({});
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -125,6 +126,42 @@ const LoginPage = () => {
                 {STRINGS.logIn}
               </Button>
             </form>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 1 }}
+              className="mb-6"
+            >
+              <p className="flex flex-col items-center justify-center text-black">
+                or
+              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.7, duration: 1 }}
+              className="mb-6"
+            >
+              <Link to="http://localhost:3000/auth/google">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  className="flex items-center justify-center mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <FaGoogle className="mr-2" /> Sign in with Google
+                </Button>
+              </Link>
+            </motion.div>
+            {errors.server && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.9, duration: 1 }}
+                className="mb-6"
+              >
+                <p className="text-red-500 mt-2">{errors.server}</p>
+              </motion.div>
+            )}
             <motion.p
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}

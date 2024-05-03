@@ -4,7 +4,6 @@ import TypewriterText from "../../utils/TypewriterText";
 import { STRINGS } from "../../utils/Strings";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaGoogle } from "react-icons/fa";
 import { Button } from "../ui/button";
 import Autoplay from "embla-carousel-autoplay";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
@@ -216,42 +215,6 @@ const SignUpPage = () => {
                   {STRINGS.SignUp}
                 </Button>
               </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5, duration: 1 }}
-                className="mb-6"
-              >
-                <p className="flex flex-col items-center justify-center text-black">
-                  or
-                </p>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.7, duration: 1 }}
-                className="mb-6"
-              >
-                <a href="http://localhost:3000/auth/google">
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    className="flex items-center justify-center mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    <FaGoogle className="mr-2" /> Sign in with Google
-                  </Button>
-                </a>
-              </motion.div>
-              {errors.server && (
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.9, duration: 1 }}
-                  className="mb-6"
-                >
-                  <p className="text-red-500 mt-2">{errors.server}</p>
-                </motion.div>
-              )}
             </form>
             <motion.p
               initial={{ opacity: 0, y: 50 }}

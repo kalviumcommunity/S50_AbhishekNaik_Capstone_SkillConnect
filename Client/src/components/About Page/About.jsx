@@ -58,7 +58,7 @@ const AboutPage = () => {
             <h3 className="text-xl font-semibold mb-2">Abhishek Naik</h3>
             <p className="text-gray-600 mb-4">Full Stack Developer</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex justify-center gap-4">
             <motion.div
               className="flex space-x-4"
               whileHover={{ scale: 1.1 }}
@@ -72,6 +72,12 @@ const AboutPage = () => {
               >
                 <AiFillGithub className="h-8 w-8 text-gray-600 hover:text-black" />
               </a>
+            </motion.div>
+            <motion.div
+              className="flex space-x-4"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
               <a
                 href="mailto:abhisheknaik11122@gmail.com"
                 aria-label="Send Email"

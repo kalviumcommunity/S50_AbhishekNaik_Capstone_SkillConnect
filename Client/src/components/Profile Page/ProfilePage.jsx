@@ -19,7 +19,7 @@ const ProfilePage = () => {
         { h: "h" },
         {
           withCredentials: true,
-        },
+        }
       )
       .then((response) => {
         navigate("/login");
@@ -54,9 +54,9 @@ const ProfilePage = () => {
           {},
           {
             withCredentials: true,
-          },
+          }
         );
-
+        // console.log("response", response);
         if (response.status !== 200) {
           throw new Error("Network response was not ok");
         }
