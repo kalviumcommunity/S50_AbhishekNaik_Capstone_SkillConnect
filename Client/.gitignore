@@ -32,5 +32,4 @@ dist-ssr
 .env.production.local   
 
 
-
-
+Client/src/components/Posts/process.js
