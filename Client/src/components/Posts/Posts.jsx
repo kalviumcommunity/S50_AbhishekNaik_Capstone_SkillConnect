@@ -149,7 +149,7 @@ const Post = ({
               <img
                 key={index}
                 src={image}
-                alt={`Post Media ${index}`}
+                alt={`Image ${index}`}
                 className="w-full md:w-1/2 mb-2 rounded-lg"
               />
             ))}

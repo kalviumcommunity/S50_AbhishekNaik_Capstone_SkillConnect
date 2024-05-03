@@ -28,17 +28,22 @@ exports.getPostById = async (req, res) => {
   }
 };
 
+const extractVideoId = (videoLink) => {
+  const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = videoLink.match(youtubeRegex);
+  return match?.[1];
+};
+
 const getEmbeddedVideoUrl = (videoLink) => {
   if (videoLink.includes("youtu.be")) {
-    const videoId = videoLink.match(
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-    )?.[1];
+    const videoId = extractVideoId(videoLink);
     if (videoId) {
       return `https://www.youtube.com/embed/${videoId}`;
     }
   }
   return videoLink;
 };
+
 
 exports.createPost = async (req, res) => {
   const errors = validationResult(req);
