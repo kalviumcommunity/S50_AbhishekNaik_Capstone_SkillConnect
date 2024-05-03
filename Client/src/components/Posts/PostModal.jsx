@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button } from "../ui/button";
@@ -6,35 +6,52 @@ import { Textarea } from "../ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import axios from "axios";
+import { Storage } from "./FirebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
-  imageUrl: Yup.string().url("Invalid image URL"),
   videoUrl: Yup.string().url("Invalid video URL"),
 });
 
 const PostModal = ({ onClose }) => {
+  const [images, setImages] = useState([]);
+
+  const handleImageChange = (selectedImages) => {
+    setImages(selectedImages);
+  };
+
   const handleSubmit = (values, { setSubmitting }) => {
-    axios
-      .post(
-        "http://localhost:3000/post",
-        {
-          title: values.title,
-          description: values.description,
-          imageUrl: values.imageUrl,
-          videoUrl: values.videoUrl,
-        },
-        {
-          withCredentials: true,
-        },
-      )
+    const uploadImagePromises = images.map((image) => {
+      const timestamp = Date.now();
+      const imgRef = ref(Storage, `images/${timestamp}_${image.name}`);
+      return uploadBytes(imgRef, image).then((snapshot) => {
+        return getDownloadURL(snapshot.ref);
+      });
+    });
+
+    Promise.all(uploadImagePromises)
+      .then((imageUrls) => {
+        return axios.post(
+          "http://localhost:3000/post",
+          {
+            title: values.title,
+            description: values.description,
+            imageUrl: imageUrls,
+            videoUrl: values.videoUrl,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+      })
       .then(() => {
         onClose();
         window.location.reload();
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error.message);
       })
       .finally(() => {
         setSubmitting(false);
@@ -62,7 +79,6 @@ const PostModal = ({ onClose }) => {
                 initialValues={{
                   title: "",
                   description: "",
-                  imageUrl: "",
                   videoUrl: "",
                 }}
                 validationSchema={validationSchema}
@@ -111,22 +127,13 @@ const PostModal = ({ onClose }) => {
                         </label>
                         <div className="mb-2">
                           <label
-                            htmlFor="imageUrl"
+                            htmlFor="imageUpload"
                             className="block text-sm font-medium text-gray-700"
                           >
-                            Image URL
+                            Images
                           </label>
-                          <Field
-                            as={Input}
-                            type="text"
-                            id="imageUrl"
-                            name="imageUrl"
-                            className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                          />
-                          <ErrorMessage
-                            name="imageUrl"
-                            component="div"
-                            className="text-red-500"
+                          <ImageUpload
+                            onChange={handleImageChange}
                           />
                         </div>
                         <div className="mb-2">
@@ -176,6 +183,19 @@ const PostModal = ({ onClose }) => {
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+const ImageUpload = ({ onChange }) => {
+  const handleImageChange = (e) => {
+    const selectedImages = Array.from(e.target.files);
+    onChange(selectedImages);
+  };
+
+  return (
+    <div>
+      <input type="file" onChange={handleImageChange} multiple />
     </div>
   );
 };

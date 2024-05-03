@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { motion } from "framer-motion";
-// import { Link } from "react-router-dom";
 
 const Post = ({
   title,
@@ -42,17 +41,6 @@ const Post = ({
     setExpanded(!expanded);
   };
 
-const fetchposts = async () => {
-  try {
-    const response = await axios.get(`http://localhost:3000/post`);
-    setPost(response.data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
- 
-
   const handleLike = async () => {
     try {
       const response = await axios.put(
@@ -64,7 +52,7 @@ const fetchposts = async () => {
       );
       setPost(response.data);
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 
@@ -76,16 +64,13 @@ const fetchposts = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
     if (confirmDelete) {
       try {
-        const response = await axios.delete(
-          `http://localhost:3000/post/${postId}`,
-          {
-            withCredentials: true,
-          }
-        );
+        await axios.delete(`http://localhost:3000/post/${postId}`, {
+          withCredentials: true,
+        });
         window.location.reload();
       } catch (error) {
         const message = error.response.data.error;
-        console.log(message);
+        // console.log(message);
         toast({
           variant: "destructive",
           title: message,
@@ -134,19 +119,6 @@ const fetchposts = async () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-       {/* <div className="p-3 flex items-center">
-        <Link to={`/profile/${createdBy}`} className="flex items-center">
-          <img
-            src={picture}
-            alt="Profile"
-            className="w-10 h-10 rounded-full mr-3"
-          />
-          <h2 className="text-lg font-semibold">{createdBy}</h2>
-        </Link>
-        <div>
-          <p className="text-sm text-gray-600">{bio}</p>
-        </div>
-      </div> */}
       <div className="p-3 flex items-center">
         <img
           src={picture}
@@ -159,75 +131,79 @@ const fetchposts = async () => {
         </div>
       </div>
       <div className="px-4 py-3">
-    <h2 className="text-lg font-semibold mb-1">{title}</h2>
-    {expanded ? (
-        <pre className="text-wrap">{description}</pre>
-    ) : (
-        <pre>{description.slice(0, 300)}...</pre>
-    )}
-    <button
-        className="text-blue-500 hover:underline"
-        onClick={toggleDescription}
-    >
-        {expanded ? "See Less" : "See More"}
-    </button>
-    <div className="flex gap-1">
-        {imageUrl && (
-            <img
-                src={imageUrl}
-                alt="Post Media"
+        <h2 className="text-lg font-semibold mb-1">{title}</h2>
+        {expanded ? (
+          <pre className="text-wrap">{description}</pre>
+        ) : (
+          <pre>{description.slice(0, 300)}...</pre>
+        )}
+        <button
+          className="text-blue-500 hover:underline"
+          onClick={toggleDescription}
+        >
+          {expanded ? "See Less" : "See More"}
+        </button>
+        <div className="flex gap-1">
+          {imageUrl &&
+            imageUrl.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Post Media ${index}`}
                 className="w-full md:w-1/2 mb-2 rounded-lg"
-            />
-        )}
-        {videoUrl && (
+              />
+            ))}
+          {videoUrl && (
             <div className="w-full md:w-1/2 mb-2 rounded-lg">
-                <iframe
-                    src={videoUrl}
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                />
+              <iframe
+                src={videoUrl}
+                allowFullScreen
+                className="w-full h-full rounded-lg"
+                width="100%" 
+                height="100%" 
+              />
             </div>
-        )}
-    </div>
-    <div className="flex items-center">
-        <Button
+          )}
+        </div>
+        <div className="flex items-center">
+          <Button
             size="lg"
             variant="ghost"
             onClick={handleLike}
             className="text-gray-600 flex items-center mr-3 px-4 py-2"
-        >
+          >
             <FaThumbsUp className="mr-1" />
             <span>{post.likes} Likes</span>
-        </Button>
-        <Button
+          </Button>
+          <Button
             size="lg"
             variant="ghost"
             onClick={handleComment}
             className="text-gray-600 flex items-center mr-3 px-4 py-2"
-        >
+          >
             <FaComment className="mr-1" />
             <span>Comment</span>
-        </Button>
-        <Button
+          </Button>
+          <Button
             size="lg"
             variant="ghost"
             onClick={handleDelete}
             className="text-gray-600 flex items-center mr-3 px-4 py-2"
-        >
+          >
             <FaTrash className="mr-1" />
             <span>Delete</span>
-        </Button>
-        <Button
+          </Button>
+          <Button
             size="lg"
             variant="ghost"
             onClick={handleEdit}
             className="text-gray-600 flex items-center px-4 py-2"
-        >
+          >
             <FaEdit className="mr-1" />
             <span>Edit</span>
-        </Button>
-    </div>
-</div>
+          </Button>
+        </div>
+      </div>
 
       {isCommentModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

@@ -1,10 +1,12 @@
 require("dotenv").config();
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 const Profile = require("../models/ProfileDetails");
 
 var GoogleStrategy = require("passport-google-oauth2").Strategy;
 const CLIENT_ID = process.env.OAUTH2_CLIENT_ID;
 const CLIENT_SECRET = process.env.OAUTH2_CLIENT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 passport.use(
   new GoogleStrategy(
@@ -26,13 +28,35 @@ passport.use(
             email: profile.email,
           });
           await newProfile.save();
-          return done(null, newProfile);
+          const token = jwt.sign(
+            { name: profile.displayName, email: profile.email },
+            JWT_SECRET
+          );
+          console.log("Profile token", token);
+          request.res.cookie("name", token, {
+            httpOnly: true,
+            // secure: true,
+            maxAge: 3600000,
+          });
+
+          return done(null, { profile: newProfile, token });
         } else {
-          return done(null, existingProfile);
+          const token = jwt.sign(
+            { name: existingProfile.name, email: existingProfile.email },
+            JWT_SECRET
+          );
+          console.log("Existing token", token);
+          request.res.cookie("name", token, {
+            httpOnly: true,
+            // secure: true,
+            maxAge: 3600000,
+          });
+
+          return done(null, { profile: existingProfile, token });
         }
       } catch (err) {
         return done(err);
       }
-    },
-  ),
+    }
+  )
 );

@@ -28,24 +28,40 @@ exports.getPostById = async (req, res) => {
   }
 };
 
+const getEmbeddedVideoUrl = (videoLink) => {
+  if (videoLink.includes("youtu.be")) {
+    const videoId = videoLink.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    )?.[1];
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  }
+  return videoLink;
+};
+
 exports.createPost = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    // console.log("rb", req.body);
+    let videoUrl = req.body.videoUrl;
+    if (videoUrl) {
+      videoUrl = getEmbeddedVideoUrl(videoUrl); 
+    }
     const newPost = new Post({
       title: req.body.title,
       description: req.body.description,
       imageUrl: req.body.imageUrl,
-      videoUrl: req.body.videoUrl,
+      videoUrl: videoUrl, 
       createdBy: req.user.name,
       createdByID: req.user._id,
       picture: req.user.picture,
       bio: req.user.bio,
     });
     const result = await newPost.save();
+    // console.log(result);
     await Profile.findOneAndUpdate(
       { _id: req.user._id },
       { $push: { posts: result._id } },
@@ -54,7 +70,6 @@ exports.createPost = async (req, res) => {
       .populate("posts")
       .exec();
     res.send(result);
-    // console.log(req.user)
   } catch (error) {
     handleError(res, 500, "Server Error");
   }

@@ -47,7 +47,6 @@ const Homepage = () => {
     axios
       .post(
         "http://localhost:3000/user/logout",
-        { h: "h" },
         {
           withCredentials: true,
         }
@@ -88,7 +87,7 @@ const Homepage = () => {
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       exit={{ opacity: 0 }}
     >
-      <Navbar toggleSidebar={toggleSidebar} />
+      <Navbar toggleSidebar={toggleSidebar} />  
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
         <div className="flex justify-center w-full">
