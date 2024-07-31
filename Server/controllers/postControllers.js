@@ -44,7 +44,6 @@ const getEmbeddedVideoUrl = (videoLink) => {
   return videoLink;
 };
 
-
 exports.createPost = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -66,14 +65,14 @@ exports.createPost = async (req, res) => {
       bio: req.user.bio,
     });
     const result = await newPost.save();
-    // console.log(result);
     await Profile.findOneAndUpdate(
       { _id: req.user._id },
       { $push: { posts: result._id } },
       { new: true }
     )
-      .populate("posts")
-      .exec();
+    .populate("posts")
+    .exec();
+    console.log(result);
     res.send(result);
   } catch (error) {
     handleError(res, 500, "Server Error");
@@ -153,6 +152,37 @@ exports.updatePostById = async (req, res) => {
     }
 
     res.send(updatedPost);
+  } catch (error) {
+    handleError(res, 500, "Server Error");
+  }
+};
+
+
+exports.makeComment = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const postId = req.params.id;
+    const { text } = req.body;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return handleError(res, 404, "Post not found");
+    }
+
+    const comment = {
+      text: text,
+      commentedBy: req.user._id,
+      commentedAt: Date.now(),
+    };
+
+    post.comments.push(comment);
+    await post.save();
+
+    res.send(post);
   } catch (error) {
     handleError(res, 500, "Server Error");
   }

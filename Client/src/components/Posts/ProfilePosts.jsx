@@ -1,23 +1,125 @@
-import React, { useEffect, useState } from "react";
-import { FaThumbsUp, FaComment } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaThumbsUp, FaComment, FaTrash, FaEdit } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { Carousel } from "react-responsive-carousel";
+import { motion } from "framer-motion";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Requires a loader
 
-const ProfilePosts = ({ title, description, imageUrl, videoUrl, user }) => {
-  const handleLike = () => {
-    console.log("Liked!");
+const ProfilePosts = ({
+  title,
+  description,
+  imageUrl,
+  videoUrl,
+  user,
+  postId,
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedPost, setEditedPost] = useState({
+    title,
+    description,
+    imageUrl,
+    videoUrl,
+  });
+  const [post, setPost] = useState({
+    title,
+    description,
+    imageUrl,
+    videoUrl,
+    likes: 0,
+    comments: [],
+  });
+  const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/post/${postId}`,
+          { withCredentials: true }
+        );
+        setPost((prev) => ({ ...prev, comments: response.data }));
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchComments();
+  }, [postId]);
+
+  const toggleDescription = () => {
+    setExpanded(!expanded);
   };
 
-  const handleComment = () => {
-    console.log("Commented!");
+  const handleLike = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/post/${postId}`,
+        { action: "like" },
+        { withCredentials: true }
+      );
+      setPost(response.data);
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
-  const handleOptions = () => {
-    console.log("Options clicked!");
+  const handleComment = async () => {
+    if (!newComment) {
+      alert("Comment cannot be empty");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/post/${postId}/comments`,
+        { text: newComment },
+        { withCredentials: true }
+      );
+      setPost(response.data);
+      setNewComment("");
+      setIsCommentModalOpen(false);
+    } catch (error) {
+      const message = error.response.data.error;
+      alert(message);
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseCommentModal = () => {
+    setIsCommentModalOpen(false);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleUpdatePost = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/post/${postId}`,
+        editedPost,
+        { withCredentials: true }
+      );
+      setPost(response.data);
+      handleCloseEditModal();
+    } catch (error) {
+      const message = error.response.data.error;
+      alert(message);
+    }
   };
 
   return (
-    <div className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6 w-full">
+    <motion.div
+      className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6 mx-auto w-full max-w-3xl"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="p-3 flex items-center">
         <img
           src={user.picture}
@@ -31,27 +133,43 @@ const ProfilePosts = ({ title, description, imageUrl, videoUrl, user }) => {
       </div>
       <div className="px-4 py-3">
         <h2 className="text-lg font-semibold mb-1">{title}</h2>
-        <p className="text-gray-700 mb-2">{description}</p>
-        <div
-          className="grid gap-10"
-          style={{ display: "flex", flexWrap: "wrap" }}
+        {expanded ? (
+          <pre className="text-wrap">{description}</pre>
+        ) : (
+          <pre>{description.slice(0, 300)}...</pre>
+        )}
+        <button
+          className="text-blue-500 hover:underline"
+          onClick={toggleDescription}
         >
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="Post Media"
-              className="w-1/2 mb-2 rounded-lg"
-              style={{ flexBasis: "50%", maxWidth: "45%" }}
-            />
+          {expanded ? "See Less" : "See More"}
+        </button>
+        <div className="flex flex-col gap-4 p-4 bg-gray-100 rounded-lg shadow-lg">
+          {/* Carousel for images */}
+          {imageUrl && imageUrl.length > 0 && (
+            <Carousel showThumbs={true} infiniteLoop useKeyboardArrows>
+              {imageUrl.map((image, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={image}
+                    alt={`Image ${index}`}
+                    className="w-full h-auto rounded-lg object-cover shadow-md"
+                  />
+                </div>
+              ))}
+            </Carousel>
           )}
+
+          {/* Video iframe */}
           {videoUrl && (
-            <iframe
-              src={videoUrl}
-              allowFullScreen
-              height={400}
-              className="mb-2 rounded-lg"
-              style={{ flexBasis: "50%", maxWidth: "45%" }}
-            />
+            <div className="w-full h-60 md:h-80 bg-black rounded-lg overflow-hidden shadow-md">
+              <iframe
+                src={videoUrl}
+                allowFullScreen
+                className="w-full h-full"
+                frameBorder="0"
+              />
+            </div>
           )}
         </div>
 
@@ -59,29 +177,124 @@ const ProfilePosts = ({ title, description, imageUrl, videoUrl, user }) => {
           <Button
             variant="ghost"
             onClick={handleLike}
-            className="text-gray-600 flex items-center mr-3"
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
           >
             <FaThumbsUp className="mr-1" />
-            <span>Like</span>
+            <span>{post.likes} Likes</span>
           </Button>
           <Button
             variant="ghost"
-            onClick={handleComment}
-            className="text-gray-600 flex items-center mr-3"
+            onClick={() => setIsCommentModalOpen(true)}
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
           >
             <FaComment className="mr-1" />
             <span>Comment</span>
           </Button>
           <Button
             variant="ghost"
-            onClick={handleOptions}
+            onClick={handleEdit}
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
+          >
+            <FaEdit className="mr-1" />
+            <span>Edit</span>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => console.log("Options clicked!")}
             className="text-gray-600 flex items-center"
           >
             <HiDotsHorizontal className="mr-1" />
           </Button>
         </div>
       </div>
-    </div>
+      {isCommentModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Add Comment</h2>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              rows="4"
+              className="w-full border rounded-lg p-2 mb-4"
+            />
+            <Button
+              size="lg"
+              onClick={handleComment}
+              className="bg-blue-500 text-white"
+            >
+              Add Comment
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleCloseCommentModal}
+              className="ml-2"
+            >
+              Cancel
+            </Button>
+            <h3 className="text-lg font-semibold mt-4">Comments:</h3>
+            {post.comments.length > 0 ? (
+              post.comments.map((comment) => (
+                <div key={comment._id} className="border-t pt-2">
+                  <p className="text-sm">{comment.text}</p>
+                </div>
+              ))
+            ) : (
+              <p>No comments yet.</p>
+            )}
+          </div>
+        </div>
+      )}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Edit Post</h2>
+            <input
+              type="text"
+              value={editedPost.title}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, title: e.target.value })
+              }
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Title"
+            />
+            <textarea
+              value={editedPost.description}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, description: e.target.value })
+              }
+              rows="4"
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Description"
+            />
+            <input
+              type="text"
+              value={editedPost.videoUrl}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, videoUrl: e.target.value })
+              }
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Video URL"
+            />
+            <Button
+              size="lg"
+              onClick={handleUpdatePost}
+              className="bg-blue-500 text-white"
+            >
+              Update Post
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleCloseEditModal}
+              className="ml-2"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 };
 

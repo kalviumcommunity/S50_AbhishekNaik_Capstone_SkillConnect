@@ -6,13 +6,45 @@ import Navbar from "../../utils/Navbar";
 import Sidebar from "../../utils/Sidebar";
 import ProfileInfo from "./ProfileInfo";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    bio: "",
+    picture: "",
+    skills: [],
+    description: "",
+  });
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/user/getsingle",
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
+        }
+        const data = response.data.profile;
+        const userposts = response.data.profile.posts;
+        setUser(data);
+        setPosts(userposts);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleLogout = () => {
-    // console.log("Logout clicked");
     axios
       .post(
         "http://localhost:3000/user/logout",
@@ -21,7 +53,7 @@ const ProfilePage = () => {
           withCredentials: true,
         }
       )
-      .then((response) => {
+      .then(() => {
         navigate("/login");
       })
       .catch((error) => {
@@ -32,54 +64,6 @@ const ProfilePage = () => {
   const handleRedirect = () => {
     navigate("/homepage");
   };
-
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    bio: "",
-    picture: "",
-    skills: [],
-  });
-
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = document.cookie;
-        // console.log("token", token);
-
-        const response = await axios.post(
-          "http://localhost:3000/user/getsingle",
-          {},
-          {
-            withCredentials: true,
-          }
-        );
-        // console.log("response", response);
-        if (response.status !== 200) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = response.data.user.profile;
-        const userposts = response.data.user.profile.posts;
-        // console.log("data", data);
-        // console.log("userposts", userposts);
-        setUser(data);
-        setPosts(userposts);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // console.log("user", user);
-
-  // useEffect(() => {
-  //   console.log("gdgd", user);
-  // }, [user]);
 
   return (
     <motion.div

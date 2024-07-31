@@ -11,6 +11,7 @@ const Homepage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     axios
@@ -34,7 +35,7 @@ const Homepage = () => {
         withCredentials: true,
       })
       .then((response) => {
-        // console.log("Response from server:", response);
+        console.log("Response from server:", response);
         setPosts(response.data);
       })
       .catch((error) => {
@@ -43,15 +44,23 @@ const Homepage = () => {
       });
   };
 
+  const clearAllCookies = () => {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+  };
+
   const handleLogout = () => {
     axios
-      .post(
-        "http://localhost:3000/user/logout",
-        {
-          withCredentials: true,
-        }
-      )
+      .post("http://localhost:3000/user/logout", {
+        withCredentials: true,
+      })
       .then((response) => {
+        clearAllCookies();
         navigate("/login");
       })
       .catch((error) => {
@@ -87,7 +96,7 @@ const Homepage = () => {
       animate={{ opacity: 1, transition: { duration: 0.5 } }}
       exit={{ opacity: 0 }}
     >
-      <Navbar toggleSidebar={toggleSidebar} />  
+      <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex">
         <Sidebar isOpen={isSidebarOpen} onLogout={handleLogout} />
         <div className="flex justify-center w-full">
@@ -125,7 +134,7 @@ const Homepage = () => {
         className="absolute top-0 left-0 p-4"
         style={{
           filter:
-            "brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(175deg)",
+            "brightness(1) invert(1) sepia(1) saturate(5) hue-rotate(175deg)",
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

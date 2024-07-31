@@ -22,9 +22,9 @@ router.post("/", validateSignupUserData, createUser);
 router.post("/login", validateLoginUserData, loginUser);
 router.post("/logout", logoutUser);
 
-router.put("/:id", validateEditUserData, updateUserById);
+router.put("/:id", updateUserById);
 
-router.patch("/:id", validateEditUserData, updateUserById);
+router.patch("/:id", updateUserById);
 
 router.delete("/:id", deleteUserById);
 
