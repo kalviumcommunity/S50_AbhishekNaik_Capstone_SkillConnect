@@ -1,0 +1,17 @@
+meta {
+  name: Edit User
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:3000/user/66374a047f97eb7b5e3dc94f
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Abhishek1111"
+  }
+}

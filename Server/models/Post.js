@@ -5,10 +5,17 @@ const postSchema = new mongoose.Schema({
   description: String,
   imageUrl: [String],
   videoUrl: String,
-  comments: {
-    type: Array,
-    default: [],
-  },
+  comments: [{
+    text: String,
+    commentedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile"
+    },
+    commentedAt: {
+      type: Date,
+      default: Date.now,
+    }
+  }],
   likes: {
     type: Number,
     default: 0,
@@ -18,7 +25,10 @@ const postSchema = new mongoose.Schema({
     default: Date.now,
   },
   createdBy: String,
-  createdByID: String,
+  createdByID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Profile",
+  },
   picture: String,
   bio: String,
 });

@@ -1,0 +1,15 @@
+meta {
+  name: Get Posts
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:3000/user
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFiaGlzaGVrMTExMSIsImVtYWlsIjoiYWJoaTExQGdtYWlsLmNvbSIsImlhdCI6MTcxNDg5OTgzNCwiZXhwIjoxNzE0OTAzNDM0fQ.vH_-J_m7QnXrZYZS8xktFkxs_lv7sl_0JTy8fEPPB30
+}

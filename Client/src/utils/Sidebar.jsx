@@ -21,7 +21,7 @@ const Sidebar = ({ onLogout }) => {
 
   const handlePost = () => {
     // Handle post button click
-    setShowModal(true); // Show the modal
+    setShowModal(true); // Show the modal 
   };
 
   const handleModalClose = () => {
@@ -62,7 +62,7 @@ const Sidebar = ({ onLogout }) => {
         )}
 
         {/* Messages Button */}
-        {expanded ? (
+        {/* {expanded ? (
           <button
             onClick={() => console.log("Messages button clicked")}
             className="text-white font-bold mt-8 py-2 px-4 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-500 hover:bg-blue-700"
@@ -72,7 +72,7 @@ const Sidebar = ({ onLogout }) => {
           </button>
         ) : (
           renderIcon(() => console.log("Messages button clicked"), FaEnvelope)
-        )}
+        )} */}
 
         {/* Post Button */}
         {expanded ? (

@@ -6,6 +6,7 @@ const {
   createPost,
   deletePostById,
   updatePostById,
+  makeComment,
 } = require("../controllers/postControllers");
 const validatePostData = require("../middleware/validatePostData");
 const validateEditPostData = require("../middleware/validateEditPostData");
@@ -16,5 +17,6 @@ router.post("/", validatePostData, createPost);
 router.delete("/:id", deletePostById);
 router.patch("/:id", validateEditPostData, updatePostById);
 router.put("/:id", validateEditPostData, updatePostById);
+router.post("/:id/comments", makeComment);
 
 module.exports = router;

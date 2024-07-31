@@ -4,6 +4,8 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { motion } from "framer-motion";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Requires a loader
+import { Carousel } from "react-responsive-carousel";
 
 const Post = ({
   title,
@@ -33,9 +35,26 @@ const Post = ({
     picture,
     bio,
     likes: 0,
+    comments: [],
   });
+  const [newComment, setNewComment] = useState("");
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/post/${postId}`,
+          { withCredentials: true }
+        );
+        setPost((prev) => ({ ...prev, comments: response.data }));
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchComments();
+  }, [postId]);
 
   const toggleDescription = () => {
     setExpanded(!expanded);
@@ -46,9 +65,7 @@ const Post = ({
       const response = await axios.put(
         `http://localhost:3000/post/${postId}`,
         { action: "like" },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setPost(response.data);
     } catch (error) {
@@ -56,8 +73,24 @@ const Post = ({
     }
   };
 
-  const handleComment = () => {
-    setIsCommentModalOpen(true);
+  const handleComment = async () => {
+    if (!newComment) {
+      toast({ variant: "destructive", title: "Comment cannot be empty" });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/post/${postId}/comments`,
+        { text: newComment },
+        { withCredentials: true }
+      );
+      setPost(response.data);
+      setNewComment("");
+      setIsCommentModalOpen(false);
+    } catch (error) {
+      const message = error.response.data.error;
+      toast({ variant: "destructive", title: message });
+    }
   };
 
   const handleDelete = async () => {
@@ -70,11 +103,7 @@ const Post = ({
         window.location.reload();
       } catch (error) {
         const message = error.response.data.error;
-        // console.log(message);
-        toast({
-          variant: "destructive",
-          title: message,
-        });
+        toast({ variant: "destructive", title: message });
       }
     }
   };
@@ -96,19 +125,14 @@ const Post = ({
       const response = await axios.put(
         `http://localhost:3000/post/${postId}`,
         editedPost,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setPost(response.data);
       handleCloseEditModal();
       window.location.reload();
     } catch (error) {
       const message = error.response.data.error;
-      toast({
-        variant: "destructive",
-        title: message,
-      });
+      toast({ variant: "destructive", title: message });
     }
   };
 
@@ -144,15 +168,19 @@ const Post = ({
           {expanded ? "See Less" : "See More"}
         </button>
         <div className="flex gap-1">
-          {imageUrl &&
-            imageUrl.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Image ${index}`}
-                className="w-full md:w-1/2 mb-2 rounded-lg"
-              />
-            ))}
+          {imageUrl && imageUrl.length > 0 && (
+            <Carousel showThumbs={false} infiniteLoop useKeyboardArrows>
+              {imageUrl.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={image}
+                    alt={`Image ${index}`}
+                    className="w-full md:w-1/2 mb-2 rounded-lg"
+                  />
+                </div>
+              ))}
+            </Carousel>
+          )}
           {videoUrl && (
             <div className="w-full md:w-1/2 mb-2 rounded-lg">
               <iframe
@@ -178,7 +206,7 @@ const Post = ({
           <Button
             size="lg"
             variant="ghost"
-            onClick={handleComment}
+            onClick={() => setIsCommentModalOpen(true)}
             className="text-gray-600 flex items-center mr-3 px-4 py-2"
           >
             <FaComment className="mr-1" />
@@ -187,106 +215,101 @@ const Post = ({
           <Button
             size="lg"
             variant="ghost"
-            onClick={handleDelete}
-            className="text-gray-600 flex items-center mr-3 px-4 py-2"
-          >
-            <FaTrash className="mr-1" />
-            <span>Delete</span>
-          </Button>
-          <Button
-            size="lg"
-            variant="ghost"
             onClick={handleEdit}
-            className="text-gray-600 flex items-center px-4 py-2"
+            className="text-gray-600 flex items-center mr-3 px-4 py-2"
           >
             <FaEdit className="mr-1" />
             <span>Edit</span>
           </Button>
+          <Button
+            size="lg"
+            variant="ghost"
+            onClick={handleDelete}
+            className="text-gray-600 flex items-center px-4 py-2"
+          >
+            <FaTrash className="mr-1" />
+            <span>Delete</span>
+          </Button>
         </div>
       </div>
-
       {isCommentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md w-96">
-            <h2 className="text-lg font-semibold mb-2">Comment Modal</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Add Comment</h2>
             <textarea
-              placeholder="Write your comment here..."
-              className="w-full p-2 border rounded-md resize-none"
-              style={{ minWidth: "calc(100% - 2rem)" }}
-            ></textarea>
-            <div className="mt-2 flex justify-end">
-              <Button
-                onClick={handleCloseCommentModal}
-                className="mr-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                onClick={() => {
-                  handleCloseCommentModal();
-                }}
-              >
-                Post Comment
-              </Button>
-            </div>
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              rows="4"
+              className="w-full border rounded-lg p-2 mb-4"
+            />
+            <Button
+              size="lg"
+              onClick={handleComment}
+              className="bg-blue-500 text-white"
+            >
+              Add Comment
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleCloseCommentModal}
+              className="ml-2"
+            >
+              Cancel
+            </Button>
+            <h3 className="text-lg font-semibold mt-4">Comments:</h3>
+            {post.comments.length > 0 ? (
+              post.comments.map((comment) => (
+                <div key={comment._id} className="border-t pt-2">
+                  <p className="text-sm">{comment.text}</p>
+                </div>
+              ))
+            ) : (
+              <p>No comments yet.</p>
+            )}
           </div>
         </div>
       )}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md w-96">
-            <h2 className="text-lg font-semibold mb-2">Edit Post</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-11/12 max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Edit Post</h2>
             <input
               type="text"
-              placeholder="Title"
               value={editedPost.title}
-              onChange={(e) =>
-                setEditedPost({ ...editedPost, title: e.target.value })
-              }
-              className="w-full p-2 border rounded-md mb-2"
+              onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })}
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Title"
             />
             <textarea
-              placeholder="Description"
               value={editedPost.description}
-              onChange={(e) =>
-                setEditedPost({ ...editedPost, description: e.target.value })
-              }
-              className="w-full p-2 border rounded-md resize-none mb-2"
+              onChange={(e) => setEditedPost({ ...editedPost, description: e.target.value })}
               rows="4"
-            ></textarea>
-            <input
-              type="text"
-              placeholder="Image URL"
-              value={editedPost.imageUrl}
-              onChange={(e) =>
-                setEditedPost({ ...editedPost, imageUrl: e.target.value })
-              }
-              className="w-full p-2 border rounded-md mb-2"
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Description"
             />
             <input
               type="text"
-              placeholder="Video URL"
               value={editedPost.videoUrl}
-              onChange={(e) =>
-                setEditedPost({ ...editedPost, videoUrl: e.target.value })
-              }
-              className="w-full p-2 border rounded-md mb-2"
+              onChange={(e) => setEditedPost({ ...editedPost, videoUrl: e.target.value })}
+              className="w-full border rounded-lg p-2 mb-2"
+              placeholder="Video URL"
             />
-            <div className="mt-2 flex justify-end">
-              <Button
-                onClick={handleCloseEditModal}
-                className="mr-2 bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-md"
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-                onClick={handleUpdatePost}
-              >
-                Update
-              </Button>
-            </div>
+            <Button
+              size="lg"
+              onClick={handleUpdatePost}
+              className="bg-blue-500 text-white"
+            >
+              Update Post
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleCloseEditModal}
+              className="ml-2"
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       )}

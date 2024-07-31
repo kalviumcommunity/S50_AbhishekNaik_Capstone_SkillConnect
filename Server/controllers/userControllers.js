@@ -1,6 +1,7 @@
-const { validationResult, header } = require("express-validator");
+const { validationResult, header, cookie } = require("express-validator");
 const User = require("../models/User");
 const Profile = require("../models/ProfileDetails");
+const Posts = require("../models/Post");
 const bcrypt = require("bcrypt");
 const SaltRounds = process.env.BCRYPT_SALT_ROUNDS;
 const jwt = require("jsonwebtoken");
@@ -24,7 +25,6 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-  // Check for validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -71,17 +71,58 @@ exports.updateUserById = async (req, res) => {
   }
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!updatedUser) {
+    const userId = req.params.id; // Ensure you get userId from the request parameters
+    const { name, email, bio, description, skills } = req.body;
+
+    // Find user by ID
+    const user = await User.findById(userId).populate("profile");
+    if (!user) {
       return res.status(404).send("404-User not found");
     }
-    res.send(updatedUser);
+
+    // Update user information
+    user.name = name;
+    user.email = email;
+    const updatedUser = await user.save();
+
+    // Update user's profile information
+    if (user.profile) {
+      user.profile.name = name;
+      user.profile.email = email;
+      user.profile.bio = bio;
+      user.profile.description = description;
+      user.profile.skills = skills;
+      const updatedProfile = await user.profile.save();
+
+      // Update createdBy field in Posts model
+      await Posts.updateMany(
+        { createdBy: userId },
+        { $set: { createdBy: updatedUser._id } }
+      );
+
+      // Generate new token with updated user information
+      const token = jwt.sign(
+        { name: updatedUser.name, email: updatedUser.email },
+        SECRET_KEY,
+        { expiresIn: "1h" }
+      );
+
+      // Set the new token in the cookie
+      res.cookie("name", token, {
+        httpOnly: true,
+        maxAge: 3600000,
+      });
+
+      res.json({ user: updatedUser, profile: updatedProfile, token });
+    } else {
+      return res.status(404).send("404-Profile not found");
+    }
   } catch (error) {
+    console.error("Error updating user:", error);
     res.status(500).send("500-Server Error");
   }
 };
+
 exports.loginUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -92,12 +133,13 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ name }).populate("profile").exec();
     // console.log("user", user);
     if (!user) {
-      return res.status(401).json({ error: "Invalid username" });
+      return res.status(404).json({ error: "User Not Found" });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
+    const uid = user.id;
     let profile = await Profile.findOne({ name: user.name })
       .populate("posts")
       .exec();
@@ -107,6 +149,7 @@ exports.loginUser = async (req, res) => {
       try {
         profile = new Profile({ name: user.name, email: user.email });
         profile.picture = `https://api.dicebear.com/8.x/initials/svg?seed=${user.name}&backgroundType=gradientLinear,solid&backgroundRotation=0,360`;
+        profile.bio = "Hello, I am using SkillConnect";
         await profile.save();
         user.profile = profile._id;
         await user.save();
@@ -116,20 +159,26 @@ exports.loginUser = async (req, res) => {
       }
     }
 
-    const token = jwt.sign(
-      { username: user.name, email: user.email },
-      SECRET_KEY,
-      {
-        expiresIn: "1h",
-      }
-    );
+    const token = jwt.sign({ name: user.name, email: user.email }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
     res.cookie("name", token, {
-      httpOnly: true,
-      // secure: true,
+      httpOnly: false,
+      // secure: false,
       maxAge: 3600000,
     });
+    res.cookie("uid", uid, {
+      httpOnly: false,
+      // secure: false,
+      maxAge: 3600000,
+    });
+    // request.res.cookie("profileid", profileID, {
+    //   httpOnly: false,
+    //   // secure: true, // Set to true if using HTTPS
+    //   maxAge: 3600000,
+    // });
     // console.log("use", token);
-    res.json({ message: "Login successful", user, token });
+    res.json({ message: "Login successful", user, token, uid });
   } catch (err) {
     console.error("Error during login:", err);
     res.status(500).json({ error: "Internal Server Error" });
@@ -138,12 +187,11 @@ exports.loginUser = async (req, res) => {
 
 exports.logoutUser = async (req, res) => {
   // console.log("coming");
-  res.clearCookie("name", { httpOnly: true });
+  res.clearCookie("name", { httpOnly: false });
   res.json({ message: "Logout successful" });
 };
 
 exports.getSingleUser = async (req, res) => {
-  // console.log("kk", req.cookies);
   const { name } = req.cookies;
   // console.log("name", name);
 
@@ -151,15 +199,16 @@ exports.getSingleUser = async (req, res) => {
     const payload = jwt.verify(name, SECRET_KEY);
     // console.log("payload", payload);
 
-    const loginUser = await User.findOne({ name: payload.username })
-      .populate({ path: "profile", populate: { path: "posts" } })
+    const loginUser = await Profile.findOne({ name: payload.name })
+      .populate({ path: "posts" })
       .exec();
+    // console.log("loginUser", loginUser);
 
     if (!loginUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ user: loginUser });
+    res.status(200).json({ profile: loginUser });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Internal server error" });

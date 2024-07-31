@@ -52,7 +52,7 @@ const SignUpPage = () => {
 
           if (response.status === 200) {
             setFormData({
-              username: "",
+              name: "",
               email: "",
               password: "",
               repeatPassword: "",
