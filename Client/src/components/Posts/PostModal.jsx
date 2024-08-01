@@ -8,6 +8,8 @@ import { Input } from "../ui/input";
 import axios from "axios";
 import { Storage } from "./FirebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { FaUpload, FaTimes } from "react-icons/fa";
+import "ldrs/ring";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string().required("Title is required"),
@@ -95,13 +97,14 @@ const PostModal = ({ onClose }) => {
                       <CardContent className="mt-2">
                         <label
                           htmlFor="title"
-                          className="block text-sm font-medium text-gray-700"
+                          className="block text-sm font-medium text-gray-700 "
                         >
                           Title
                           <Field
                             as={Textarea}
                             name="title"
-                            className="w-full border rounded-md p-2 mb-2"
+                            placeholder="Enter post title"
+                            className="w-full border rounded-md p-2 mt-2 mb-2"
                           />
                           <ErrorMessage
                             name="title"
@@ -117,7 +120,8 @@ const PostModal = ({ onClose }) => {
                           <Field
                             as={Textarea}
                             name="description"
-                            className="w-full border rounded-md p-2 mb-2"
+                            placeholder={`Format:\n\nName of Project:\nIntroduction:\nProblem Statement:\nTech Stack Used:\n\nEnter details here`}
+                            className="w-full border rounded-md p-2 mt-2 mb-2"
                           />
                           <ErrorMessage
                             name="description"
@@ -128,13 +132,11 @@ const PostModal = ({ onClose }) => {
                         <div className="mb-2">
                           <label
                             htmlFor="imageUpload"
-                            className="block text-sm font-medium text-gray-700"
+                            className="block text-sm font-medium text-gray-700 mb-2"
                           >
                             Images
                           </label>
-                          <ImageUpload
-                            onChange={handleImageChange}
-                          />
+                          <ImageUpload onChange={handleImageChange} />
                         </div>
                         <div className="mb-2">
                           <label
@@ -148,7 +150,8 @@ const PostModal = ({ onClose }) => {
                             type="text"
                             id="videoUrl"
                             name="videoUrl"
-                            className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Enter video URL"
+                            className="mt-2  focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                           />
                           <ErrorMessage
                             name="videoUrl"
@@ -165,7 +168,12 @@ const PostModal = ({ onClose }) => {
                         disabled={isSubmitting}
                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
                       >
-                        {isSubmitting ? "Posting..." : "Post"}
+                        <FaUpload className="mr-2" />
+                        {isSubmitting ? (
+                          <l-ring size="25" color="black"></l-ring>
+                        ) : (
+                          "Upload"
+                        )}
                       </Button>
                       <Button
                         variant="ghost"
@@ -173,6 +181,7 @@ const PostModal = ({ onClose }) => {
                         onClick={onClose}
                         className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                       >
+                        <FaTimes className="mr-2" />
                         Cancel
                       </Button>
                     </div>

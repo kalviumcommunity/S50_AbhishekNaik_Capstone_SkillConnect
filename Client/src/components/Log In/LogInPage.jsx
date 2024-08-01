@@ -56,13 +56,13 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-black">
       {/* Left side */}
       <motion.div
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
-        className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center"
+        className="w-full md:w-1/2 bg-black text-white flex flex-col justify-center items-center"
       >
         <motion.div
           initial={{ y: -100 }}
@@ -182,7 +182,7 @@ const LoginPage = () => {
       </motion.div>
 
       {/* Right side */}
-      <div className="hidden md:block w-1/2 overflow-hidden">
+      <div className="hidden md:block w-1/2 overflow-hidden bg-black">
         <Carousel
           opts={{
             align: "start",
@@ -219,6 +219,8 @@ const LoginPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
+        style={{ filter: "invert(100%)" }}
+
       />
     </div>
   );
