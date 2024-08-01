@@ -115,12 +115,12 @@ const ProfilePosts = ({
 
   return (
     <motion.div
-      className="bg-gray-100 rounded-lg shadow-md overflow-hidden mt-6 mx-auto w-full max-w-3xl"
+      className="bg-gray-300 rounded-lg shadow-md overflow-hidden mt-6 mx-auto w-full max-w-xl"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="p-3 flex items-center">
+      <div className="px-4 py-2 flex items-center">
         <img
           src={user.picture}
           alt="Profile"
@@ -144,10 +144,10 @@ const ProfilePosts = ({
         >
           {expanded ? "See Less" : "See More"}
         </button>
-        <div className="flex flex-col gap-4 p-4 bg-gray-100 rounded-lg shadow-lg">
+        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
           {/* Carousel for images */}
           {imageUrl && imageUrl.length > 0 && (
-            <Carousel showThumbs={true} infiniteLoop useKeyboardArrows>
+            <Carousel showThumbs={false} infiniteLoop useKeyboardArrows>
               {imageUrl.map((image, index) => (
                 <div key={index} className="relative">
                   <img

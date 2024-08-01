@@ -21,7 +21,7 @@ const LandingPage = () => {
     >
       {/* Left side */}
       <motion.div
-        className="w-full md:w-1/2 bg-white flex flex-col justify-center items-center"
+        className="w-full md:w-1/2 bg-black text-white flex flex-col justify-center items-center"
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
@@ -58,7 +58,7 @@ const LandingPage = () => {
       </motion.div>
 
       {/* Right side */}
-      <div className="hidden md:block w-1/2 overflow-hidden">
+      <div className="hidden md:block w-1/2 overflow-hidden bg-black">
         <Carousel
           opts={{
             align: "start",
@@ -95,6 +95,8 @@ const LandingPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
+        style={{ filter: "invert(100%)" }}
+
       />
     </motion.div>
   );
