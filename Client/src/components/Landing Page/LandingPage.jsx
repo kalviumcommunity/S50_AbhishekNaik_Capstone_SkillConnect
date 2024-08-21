@@ -27,7 +27,7 @@ const LandingPage = () => {
         transition={{ delay: 0.5, duration: 0.5 }}
       >
         <motion.h1
-          className="text-4xl font-bold"
+          className="text-7xl font-bold"
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
@@ -36,7 +36,7 @@ const LandingPage = () => {
             strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]}
           />
         </motion.h1>
-        <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
+        <p className="text-md mt-4 font-poppins">{STRINGS.tagline}</p>
         <div className="mt-8">
           <Link to="/signup">
             <Button className="bg-blue-500 mr-6 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">

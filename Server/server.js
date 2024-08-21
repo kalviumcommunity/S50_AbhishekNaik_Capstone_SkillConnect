@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT;
 const ES_SECRET = process.env.EXPRESS_SESSION_SECRET;
 const DatabaseConnection = require("./config/DatabaseConnection");
 const pingRoute = require("./routes/ping");

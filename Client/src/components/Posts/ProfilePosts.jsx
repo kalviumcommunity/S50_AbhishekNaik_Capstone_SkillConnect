@@ -134,16 +134,19 @@ const ProfilePosts = ({
       <div className="px-4 py-3">
         <h2 className="text-lg font-semibold mb-1">{title}</h2>
         {expanded ? (
-          <pre className="text-wrap">{description}</pre>
+          <pre className="whitespace-pre-wrap">{description}</pre>
         ) : (
-          <pre>{description.slice(0, 300)}...</pre>
+          <pre className="whitespace-pre-wrap">
+            {description.slice(0, 300)}...
+          </pre>
         )}
         <button
-          className="text-blue-500 hover:underline"
+          className="text-blue-400 hover:underline"
           onClick={toggleDescription}
         >
           {expanded ? "See Less" : "See More"}
         </button>
+
         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow-lg">
           {/* Carousel for images */}
           {imageUrl && imageUrl.length > 0 && (

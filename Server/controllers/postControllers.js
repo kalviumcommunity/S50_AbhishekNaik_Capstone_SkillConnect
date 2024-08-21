@@ -29,7 +29,8 @@ exports.getPostById = async (req, res) => {
 };
 
 const extractVideoId = (videoLink) => {
-  const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const youtubeRegex =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = videoLink.match(youtubeRegex);
   return match?.[1];
 };
@@ -52,13 +53,13 @@ exports.createPost = async (req, res) => {
   try {
     let videoUrl = req.body.videoUrl;
     if (videoUrl) {
-      videoUrl = getEmbeddedVideoUrl(videoUrl); 
+      videoUrl = getEmbeddedVideoUrl(videoUrl);
     }
     const newPost = new Post({
       title: req.body.title,
       description: req.body.description,
       imageUrl: req.body.imageUrl,
-      videoUrl: videoUrl, 
+      videoUrl: videoUrl,
       createdBy: req.user.name,
       createdByID: req.user._id,
       picture: req.user.picture,
@@ -70,9 +71,9 @@ exports.createPost = async (req, res) => {
       { $push: { posts: result._id } },
       { new: true }
     )
-    .populate("posts")
-    .exec();
-    console.log(result);
+      .populate("posts")
+      .exec();
+    // console.log(result);
     res.send(result);
   } catch (error) {
     handleError(res, 500, "Server Error");
@@ -90,8 +91,9 @@ exports.deletePostById = async (req, res) => {
       return handleError(res, 404, "Post not found");
     }
     const userID = req.user._id.toString();
+    const deleteID = deletedPost.createdByID.toString();
     // console.log("userID", userID);
-    if (deletedPost.createdByID !== userID) {
+    if (deleteID !== userID) {
       return handleError(
         res,
         403,
@@ -156,7 +158,6 @@ exports.updatePostById = async (req, res) => {
     handleError(res, 500, "Server Error");
   }
 };
-
 
 exports.makeComment = async (req, res) => {
   const errors = validationResult(req);

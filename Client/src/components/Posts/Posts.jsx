@@ -4,8 +4,9 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { motion } from "framer-motion";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Requires a loader
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
+import { jwtDecode } from "jwt-decode";
 
 const Post = ({
   title,
@@ -37,6 +38,7 @@ const Post = ({
     likes: 0,
     comments: [],
   });
+  console.log("post", post);
   const [newComment, setNewComment] = useState("");
 
   const { toast } = useToast();
@@ -157,9 +159,11 @@ const Post = ({
       <div className="px-4 py-3">
         <h2 className="text-lg font-semibold mb-1">{title}</h2>
         {expanded ? (
-          <pre className="text-wrap">{description}</pre>
+          <pre className="whitespace-pre-wrap">{description}</pre>
         ) : (
-          <pre>{description.slice(0, 300)}...</pre>
+          <pre className="whitespace-pre-wrap">
+            {description.slice(0, 300)}...
+          </pre>
         )}
         <button
           className="text-blue-400 hover:underline"
@@ -167,6 +171,7 @@ const Post = ({
         >
           {expanded ? "See Less" : "See More"}
         </button>
+
         <div className="flex flex-col gap-4 p-4 bg-black rounded-lg shadow-lg">
           {/* Carousel for images */}
           {imageUrl && imageUrl.length > 0 && (
@@ -280,13 +285,17 @@ const Post = ({
             <input
               type="text"
               value={editedPost.title}
-              onChange={(e) => setEditedPost({ ...editedPost, title: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, title: e.target.value })
+              }
               className="w-full border-black border rounded-lg p-2 mb-4 bg-black text-white"
               placeholder="Title"
             />
             <textarea
               value={editedPost.description}
-              onChange={(e) => setEditedPost({ ...editedPost, description: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, description: e.target.value })
+              }
               rows="4"
               className="w-full border-black border rounded-lg p-2 mb-4 bg-black text-white"
               placeholder="Description"
@@ -294,7 +303,9 @@ const Post = ({
             <input
               type="text"
               value={editedPost.videoUrl}
-              onChange={(e) => setEditedPost({ ...editedPost, videoUrl: e.target.value })}
+              onChange={(e) =>
+                setEditedPost({ ...editedPost, videoUrl: e.target.value })
+              }
               className="w-full border-black border rounded-lg p-2 mb-4 bg-black text-white"
               placeholder="Video URL"
             />
