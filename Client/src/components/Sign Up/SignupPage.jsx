@@ -112,12 +112,12 @@ const SignUpPage = () => {
         className="w-full md:w-1/2 bg-black text-white flex flex-col justify-center items-center"
       >
         <div className="text-center">
-          <h1 className="text-4xl font-bold mt-16">
+          <h1 className="text-5xl font-bold">
             <TypewriterText
               strings={[STRINGS.connect, STRINGS.learn, STRINGS.grow]}
             />
           </h1>
-          <p className="text-2xl mt-4 font-poppins">{STRINGS.tagline}</p>
+          <p className="text-md mt-4 font-poppins">{STRINGS.tagline}</p>
         </div>
         <Card className="mt-8 w-[300px]">
           <CardHeader>
